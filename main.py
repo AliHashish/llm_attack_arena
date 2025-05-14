@@ -1,7 +1,6 @@
 import argparse
 from prompt_process import load_json
 import attack
-import defence
 import download_models
 from utils import model_names_list
 
