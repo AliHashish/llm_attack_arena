@@ -344,8 +344,7 @@ class LocalVLLM(LLM):
         self.model_path = model_path
         self.model_name = model_name
 
-        self.model = VLLM(
-            self.model_path, gpu_memory_utilization=gpu_memory_utilization)
+        self.model = VLLM(model=model_name)
         
         if system_message is None and 'llama' in model_path:
             # monkey patch for latest FastChat to use llama2's official system message
