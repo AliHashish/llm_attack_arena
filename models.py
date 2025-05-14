@@ -22,7 +22,7 @@ import concurrent.futures
 import google.generativeai as palm
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import openai
-from vllm import LLM as vllm
+from vllm import LLM as VLLM
 from vllm import SamplingParams
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list
@@ -344,7 +344,7 @@ class LocalVLLM(LLM):
         self.model_path = model_path
         self.model_name = model_name
 
-        self.model = vllm(
+        self.model = VLLM(
             self.model_path, gpu_memory_utilization=gpu_memory_utilization)
         
         if system_message is None and 'llama' in model_path:
