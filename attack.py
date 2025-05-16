@@ -224,6 +224,7 @@ class DeepInception(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/DeepInception", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -342,6 +343,7 @@ class TemplateJailbreak(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/TemplateJailbreak/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()

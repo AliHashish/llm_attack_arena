@@ -118,10 +118,11 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     #     json.dump(processed_local_res_s, f, indent=4)
     # with open('processed_local_jailbreak_res_f.json', 'w') as f:
     #     json.dump(processed_local_res_f, f, indent=4)
-
-    if not os.path.exists(f"../../Results/{directory_name}"):
-            os.makedirs(f"../../Results/{directory_name}")
-    with open(f'../../Results/{directory_name}/TemplateJailbreak_{model_name}.json', 'w') as f:
+    path_name = model_name.replace("/", "_")
+    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results"):
+        os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results")
+    print(json.dumps(final_res, indent=4))
+    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_{path_name}.json', 'w') as f:
         json.dump(final_res, f, indent=4)
     del local_model
     gc.collect()

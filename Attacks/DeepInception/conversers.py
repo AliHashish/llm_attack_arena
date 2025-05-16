@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import common
 from config import (FALCON_PATH, LLAMA_PATH, TARGET_TEMP, TARGET_TOP_P,
                     VICUNA_PATH)
-from language_models import GPT, HuggingFace
+from language_models import HuggingFace
 
 
 def load_attack_and_target_models(args):
@@ -146,6 +146,10 @@ def get_model_path_and_template(model_name):
         "falcon":{
             "path":FALCON_PATH,
             "template":"falcon"
+        },
+        "phi2":{
+            "path":"microsoft/phi-2",
+            "template":"llama-2"
         },
     }
     path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
