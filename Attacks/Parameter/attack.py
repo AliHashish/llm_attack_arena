@@ -102,7 +102,7 @@ def main():
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
-        model_path = get_model_path(model_name)
+        model_path = model_name #get_model_path(model_name)
         directory_name = args.model
     else:
         model_name = 'unknown'
@@ -240,7 +240,7 @@ def main():
             # results.to_csv(f"outputs/{fname}/output_default.csv")
 
     if args.tune_temp:
-        for temp in np.arange(0.05, 1.05, 0.05):
+        for temp in np.arange(0.05, 1.05, 0.1):
             temp = np.round(temp, 2)
             logging.info(f"Running temp = {temp}")
             prompts = []
@@ -298,7 +298,7 @@ def main():
             # results.to_csv(f"outputs/{fname}/output_temp_{temp}.csv")
 
     if args.tune_topp:
-        for top_p in np.arange(0, 1.05, 0.05):
+        for top_p in np.arange(0, 1.05, 0.1):
             top_p = np.round(top_p, 2)
             logging.info(f"Running topp = {top_p}")
             outputs = []
@@ -402,7 +402,7 @@ def main():
                 # results.to_csv(f"outputs/{fname}/output_topk_{top_k}.csv")
 
     if args.tune_presence:
-        for presence in np.arange(-2, 2.1, 0.1):
+        for presence in np.arange(-2, 2.1, 0.5):
             presence = np.round(presence, 2)
             logging.info(f"Running presence penalty = {presence}")
             if not openAI_model:
@@ -438,7 +438,7 @@ def main():
             #     break
             # break
     if args.tune_frequency:
-        for frequency in np.arange(-2, 2.1, 0.1):
+        for frequency in np.arange(-2, 2.1, 0.5):
             frequency = np.round(frequency, 2)
             logging.info(f"Running frequency penalty = {frequency}")
             if not openAI_model:
@@ -472,9 +472,10 @@ def main():
                     
             #     break
             # break
-    if not os.path.exists(f"../../Results/{directory_name}"):
-            os.makedirs(f"../../Results/{directory_name}")
-    with open(f'../../Results/{directory_name}/Parameters_{model_name}.json', 'w') as f:
+    model_name_path = model_name.replace("/","_")
+    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results"):
+            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results")
+    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results/Parameters_{model_name_path}.json', 'w') as f:
         json.dump(final_results, f, indent=4)
 if __name__ == "__main__":
     main()

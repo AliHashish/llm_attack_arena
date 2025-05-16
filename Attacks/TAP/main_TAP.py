@@ -388,14 +388,7 @@ if __name__ == '__main__':
         "--attack-model",
         default = "gpt-3.5-turbo",
         help = "Name of attacking model.",
-        choices=["vicuna", 
-                 "vicuna13",
-                 "vicuna-api-model", 
-                 "gpt-3.5-turbo", 
-                 "gpt-4", 
-                 "gpt-4-turbo", 
-                 "gpt-4-1106-preview", # This is same as gpt-4-turbo
-                 'llama-2-api-model']
+        choices = model_names_list.keys()
     )
     parser.add_argument(
         "--attack-max-n-tokens",
@@ -416,15 +409,7 @@ if __name__ == '__main__':
         "--target-model",
         default = "gpt-3.5-turbo",
         help = "Name of target model.",
-        choices=["llama",
-                 'llama-2-api-model', 
-                 "vicuna",
-                 'vicuna-api-model', 
-                 "gpt-3.5-turbo", 
-                 "gpt-4",
-                 'gpt-4-turbo', 
-                 'gpt-4-1106-preview', # This is same as gpt-4-turbo
-                 "palm-2"]
+        choices = model_names_list.keys()
     )
     parser.add_argument(
         "--target-max-n-tokens",
@@ -439,11 +424,7 @@ if __name__ == '__main__':
         "--evaluator-model",
         default="gpt-3.5-turbo",
         help="Name of evaluator model.",
-        choices=["gpt-3.5-turbo", 
-                 "gpt-4", 
-                 "gpt-4-turbo", 
-                 "gpt-4-1106-preview", 
-                 "no-evaluator"]
+        choices = model_names_list.keys()
     )
     parser.add_argument(
         "--evaluator-max-n-tokens",
@@ -543,21 +524,12 @@ if __name__ == '__main__':
     ##################################################
 
     args = parser.parse_args()
-    if 'vicuna' in args.target_model:
-        args.model_name = 'vicuna'
-        args.directory_name = 'vicuna'
-    elif 'llama' in args.target_model:
-        args.model_name = 'llama-2'
-        args.directory_name = 'llama'
-    elif 'gpt-3.5' in args.target_model:
-        args.model_name = 'gpt-3.5'
-        args.directory_name = 'gpt'
-    elif 'gpt-4' in args.target_model:
-        args.model_name = 'gpt-4'
-        args.directory_name = 'gpt'
-    else:
+    if args.target_model in model_names_list.keys():
         args.model_name = args.target_model
         args.directory_name = args.target_model
+    else:
+        raise ValueError(f"Unknown model name, supports only {model_names_list.keys()}")
+        
         
     print("target model is loaded", args.target_model)
     main(args)
