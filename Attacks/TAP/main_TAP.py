@@ -371,9 +371,12 @@ def main(args):
         torch.cuda.empty_cache()
         torch.cuda.synchronize() 
 
-    if not os.path.exists(f"../../Results/{args.directory_name}"):
-            os.makedirs(f"../../Results/{args.directory_name}")
-    with open(f'../../Results/{args.directory_name}/Tap_{args.model_name}.json', 'w') as f:
+    path_name = args.model_name.replace("/", "_")
+    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TAP/Results"):
+            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TAP/Results")
+    
+    print(json.dumps(final_results, indent=4))
+    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/TAP/Results/Tap_{path_name}.json', 'w') as f:
         json.dump(final_results, f, indent=4)    
     del attack_llm, target_llm, evaluator_llm
     gc.collect()
