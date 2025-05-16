@@ -5,6 +5,6 @@ def get_config():
 
     # Define your configurations
     config.MAX_ALLOWED_ITERATION_PER_QUESTION = 75
-    config.REPEAT_TIME_PER_QUESTION = 5
+    config.REPEAT_TIME_PER_QUESTION = 3
 
     return config
