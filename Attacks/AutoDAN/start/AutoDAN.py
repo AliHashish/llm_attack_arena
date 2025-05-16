@@ -115,7 +115,7 @@ if __name__ == '__main__':
         print(f"{model_name} model is loaded")
     else:
         model_name = 'unknown'
-        raise ValueError("Unknown model name, supports only vicuna and llama-2")
+        raise ValueError("Unknown model name")
     
     model_path = get_model_path(model_name)
 
