@@ -6,8 +6,8 @@ import sys
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, MAX_PARALLEL_STREAMS,VICUNA_ATTACK_PATH
-from vllm import LLM as vllm
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from models import LocalVLLM
 from utils import model_names_list, get_model_path_and_template
 
 def load_target_model(args):
@@ -116,10 +116,9 @@ class AttackLLM():
                 print(f'\tQuerying attacker with {len(full_prompts_subset[left:right])} prompts', flush=True)
                 
                 outputs_list.extend(
-                                    self.model.batched_generate(full_prompts_subset[left:right],
-                                                        max_n_tokens = self.max_n_tokens,  
-                                                        temperature = self.temperature,
-                                                        top_p = self.top_p
+                                    self.model.generate_batch(full_prompts_subset[left:right],
+                                                        max_tokens = self.max_n_tokens,  
+                                                        temperature = self.temperature
                                                     )
                 )
             
@@ -204,10 +203,9 @@ class TargetLLM():
 
 
             outputs_list.extend(
-                                self.model.batched_generate(full_prompts[left:right], 
-                                                            max_n_tokens = self.max_n_tokens,  
+                                self.model.generate_batch(full_prompts[left:right], 
+                                                            max_tokens = self.max_n_tokens,  
                                                             temperature = self.temperature,
-                                                            top_p = self.top_p
                                                         )
             )
         return outputs_list
@@ -223,16 +221,16 @@ def load_indiv_model(model_name, device=None):
     common.MODEL_NAME = model_name
     
     if model_name in ["gpt-3.5-turbo", "gpt-4", 'gpt-4-1106-preview']:
-        lm = GPT(model_name)
+        model = GPT(model_name)
     elif model_name == "palm-2":
-        lm = PaLM(model_name)
+        model = PaLM(model_name)
     elif model_name == 'llama-2-api-model':
-        lm = APIModelLlama7B(model_name)
+        model = APIModelLlama7B(model_name)
     elif model_name == 'vicuna-api-model':
-        lm = APIModelVicuna13B(model_name)
+        model = APIModelVicuna13B(model_name)
     else:
         if model_name in model_names_list.keys():
-            model = vllm(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
+            model = LocalVLLM(model_name=model_path,model_path=model_path, gpu_memory_utilization=0.9)
 
         else:
             model = AutoModelForCausalLM.from_pretrained(
@@ -256,6 +254,6 @@ def load_indiv_model(model_name, device=None):
         if not tokenizer.pad_token:
             tokenizer.pad_token = tokenizer.eos_token
 
-        lm = HuggingFace(model_name, model, tokenizer)
+        # lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template 
+    return model, template 
