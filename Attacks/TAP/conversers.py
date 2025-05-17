@@ -116,10 +116,9 @@ class AttackLLM():
                 print(f'\tQuerying attacker with {len(full_prompts_subset[left:right])} prompts', flush=True)
                 
                 outputs_list.extend(
-                                    self.model.batched_generate(full_prompts_subset[left:right],
-                                                        max_n_tokens = self.max_n_tokens,  
-                                                        temperature = self.temperature,
-                                                        top_p = self.top_p
+                                    self.model.generate_batch(full_prompts_subset[left:right],
+                                                        max_tokens = self.max_n_tokens,  
+                                                        temperature = self.temperature
                                                     )
                 )
             
@@ -204,10 +203,9 @@ class TargetLLM():
 
 
             outputs_list.extend(
-                                self.model.batched_generate(full_prompts[left:right], 
-                                                            max_n_tokens = self.max_n_tokens,  
+                                self.model.generate_batch(full_prompts[left:right], 
+                                                            max_tokens = self.max_n_tokens,  
                                                             temperature = self.temperature,
-                                                            top_p = self.top_p
                                                         )
             )
         return outputs_list
