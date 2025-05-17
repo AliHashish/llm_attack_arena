@@ -27,6 +27,12 @@ from vllm import SamplingParams
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list
 
+MAX_LEN = 2048
+
+def truncate_prompts(tokenizer, prompt, max_len):
+    tokens = tokenizer(prompt, truncation=True, max_length=max_len, return_tensors="pt")["input_ids"]
+    return tokenizer.decode(tokens[0], skip_special_tokens=True)
+
 class LLM:
     def __init__(self):
         self.model = None
@@ -115,7 +121,7 @@ class LocalLLM(LLM):
     def generate(self, prompt, temperature=0.01, max_tokens=50, repetition_penalty=1.0):
         # conv_temp = get_conversation_template(self.model_path)
         # self.set_system_message(conv_temp)
-
+    
         # conv_temp.append_message(conv_temp.roles[0], prompt)
         # conv_temp.append_message(conv_temp.roles[1], None)
 
@@ -343,6 +349,7 @@ class LocalVLLM(LLM):
 
         self.model_path = model_path
         self.model_name = model_name
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
         self.model = VLLM(model=model_name)
         
@@ -379,7 +386,7 @@ class LocalVLLM(LLM):
 
         #     prompt_input = conv_temp.get_prompt()
         #     prompt_inputs.append(prompt_input)
-
+        truncate_prompts(self.tokenizer, prompts, MAX_LEN)
         sampling_params = SamplingParams(temperature=temperature, max_tokens=max_tokens,top_p=top_p,top_k=top_k,repetition_penalty=repetition_penalty,frequency_penalty=frequency_penalty,presence_penalty=presence_penalty,n=n)
         results = self.model.generate(
             prompts, sampling_params, use_tqdm=False)
