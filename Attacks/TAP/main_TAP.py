@@ -141,9 +141,9 @@ def main(args):
         args.target_str = target
         attack_llm, target_llm = load_attack_and_target_models(args)
         print('Done loading attacker and target!', flush=True)
-        if attack_llm == args.evaluator_model:
+        if args.attack_model == args.evaluator_model:
             evaluator_llm = load_evaluator(args, preloaded_model=attack_llm)
-        elif target_llm == args.evaluator_model:
+        elif args.traget_model == args.evaluator_model:
             evaluator_llm = load_evaluator(args, preloaded_model=target_llm)
         else:
             evaluator_llm = load_evaluator(args, preloaded_model=None)
