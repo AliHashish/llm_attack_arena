@@ -194,7 +194,7 @@ class GPT(LanguageModel):
     API_QUERY_SLEEP = 0.5
     API_MAX_RETRY = 20
     API_TIMEOUT = 20
-    client = openai.OpenAI()
+    client = None
 
     def generate(self, conv: List[Dict], 
                 max_n_tokens: int, 
