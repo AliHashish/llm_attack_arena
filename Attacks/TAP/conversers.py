@@ -223,13 +223,13 @@ def load_indiv_model(model_name, device=None):
     common.MODEL_NAME = model_name
     
     if model_name in ["gpt-3.5-turbo", "gpt-4", 'gpt-4-1106-preview']:
-        lm = GPT(model_name)
+        model = GPT(model_name)
     elif model_name == "palm-2":
-        lm = PaLM(model_name)
+        model = PaLM(model_name)
     elif model_name == 'llama-2-api-model':
-        lm = APIModelLlama7B(model_name)
+        model = APIModelLlama7B(model_name)
     elif model_name == 'vicuna-api-model':
-        lm = APIModelVicuna13B(model_name)
+        model = APIModelVicuna13B(model_name)
     else:
         if model_name in model_names_list.keys():
             model = vllm(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
@@ -256,6 +256,6 @@ def load_indiv_model(model_name, device=None):
         if not tokenizer.pad_token:
             tokenizer.pad_token = tokenizer.eos_token
 
-        lm = HuggingFace(model_name, model, tokenizer)
+        # lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template 
+    return model, template 
