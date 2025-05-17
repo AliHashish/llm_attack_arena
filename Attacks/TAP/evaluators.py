@@ -3,6 +3,8 @@ import re
 from fastchat.model import (
     get_conversation_template
 )
+import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from models import LocalVLLM
 from system_prompts import get_evaluator_system_prompt_for_judge, get_evaluator_system_prompt_for_on_topic
