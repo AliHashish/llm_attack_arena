@@ -151,8 +151,8 @@ class AttackLLM():
             print(f"Failed to generate output after {self.max_n_attack_attempts} attempts. Terminating.")
         return valid_outputs
     
-    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
-        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty)
 class TargetLLM():
     """
         Base class for target language models.
@@ -210,8 +210,8 @@ class TargetLLM():
             )
         return outputs_list
     
-    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
-        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty)
 
 
 
