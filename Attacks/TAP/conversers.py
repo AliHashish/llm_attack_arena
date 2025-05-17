@@ -2,9 +2,14 @@
 import common
 from language_models import GPT, PaLM, HuggingFace, APIModelLlama7B, APIModelVicuna13B
 import torch
+import sys
+import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, MAX_PARALLEL_STREAMS,VICUNA_ATTACK_PATH
 from vllm import LLM as vllm
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from utils import model_names_list, get_model_path_and_template
+
 def load_target_model(args):
     target_llm = TargetLLM(model_name = args.target_model, 
                         max_n_tokens = args.target_max_n_tokens,
@@ -146,7 +151,9 @@ class AttackLLM():
         if any([output for output in valid_outputs if output is None]):
             print(f"Failed to generate output after {self.max_n_attack_attempts} attempts. Terminating.")
         return valid_outputs
-
+    
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
 class TargetLLM():
     """
         Base class for target language models.
@@ -204,6 +211,9 @@ class TargetLLM():
                                                         )
             )
         return outputs_list
+    
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
 
 
 
@@ -221,7 +231,7 @@ def load_indiv_model(model_name, device=None):
     elif model_name == 'vicuna-api-model':
         lm = APIModelVicuna13B(model_name)
     else:
-        if 'vicuna13' in model_name:
+        if model_name in model_names_list.keys():
             model = vllm(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
 
         else:
@@ -248,22 +258,4 @@ def load_indiv_model(model_name, device=None):
 
         lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template
-
-def get_model_path_and_template(model_name):
-    full_model_dict={
-        "llama":{
-            "path": LLAMA_PATH,
-            "template":"llama-2"
-        },
-        "phi2":{
-            "path": "phi2",
-            "template": "phi2"
-        }
-    }
-    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
-    return path, template
-
-
-
-    
+    return lm, template 

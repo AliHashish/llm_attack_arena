@@ -4,7 +4,7 @@ import attack
 import download_models
 from utils import model_names_list
 
-def run_attack(model_name, attack_type):
+def run_attack(model_name, attack_type, args):
     """
     Execute an attack on a specified model using the chosen attack type.
     """
@@ -22,7 +22,7 @@ def run_attack(model_name, attack_type):
         attack_instance.run()
     elif attack_type == "Tap":
         print(f"Applying Tap attack to {model_name}")
-        attack_instance = attack.Tap(model=model_name)
+        attack_instance = attack.Tap(model=model_name, attack_model=args.attack_model, evaluation_model=args.evaluation_model)
         attack_instance.run()
     elif attack_type == "Pair":
         print (f"Applying Pair attack to {model_name}")
@@ -50,6 +50,8 @@ def run_attack(model_name, attack_type):
 def main():
     parser = argparse.ArgumentParser(description="Run attack and defense mechanisms on AI models")
     parser.add_argument('--model', choices=model_names_list.keys(), required=False, help='Model to attack or defend')
+    parser.add_argument('--attack-model', required=False, help='Name of the attack model [Used in Generative Attacks]')
+    parser.add_argument('--evaluation-model', required=False, help='Name of the evaluation model [Used in Generative Attacks]')
     parser.add_argument('--mode', choices=['attack','process'], required=False, help='Whether to run an attack or apply a defense or process the results.')
     parser.add_argument('--type', required=False, help='Type of attack to run')
     parser.add_argument('--need-download', required=False,default="false", help='do you need to download the model?')
@@ -65,7 +67,7 @@ def main():
         download_models.download(args.model)
 
     if args.mode == 'attack':
-        run_attack(args.model, args.type)
+        run_attack(args.model, args.type, args)
     elif args.mode == 'process':
         ##NOTE This must happen before the defense is applied
         load_json(f'./Results/{args.model}')

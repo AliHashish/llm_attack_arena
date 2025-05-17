@@ -3,14 +3,19 @@ import re
 from fastchat.model import (
     get_conversation_template
 )
-
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from models import LocalVLLM
+from utils import model_names_list, get_model_path_and_template
 from system_prompts import get_evaluator_system_prompt_for_judge, get_evaluator_system_prompt_for_on_topic
-
 from language_models import GPT
 
-def load_evaluator(args):
+def load_evaluator(args, preloaded_model=None):
     if "gpt" in args.evaluator_model:
         return GPTEvaluator(args)
+    elif args.evaluator_model in model_names_list:
+        return LocalEvaluator(args.evaluator_model, args, preloaded_model)
     elif args.evaluator_model == "no-evaluator":
         return NoEvaluator(args)
     else:
@@ -119,6 +124,49 @@ class GPTEvaluator(EvaluatorBase):
         outputs = [self.process_output_on_topic_score(raw_output) for raw_output in raw_outputs]
         return outputs
 
-class OpenSourceEvaluator(EvaluatorBase):
-    def __init__(self, evaluator_model, evaluator_tokenizer, args): 
-        raise NotImplementedError
+class LocalEvaluator(EvaluatorBase):
+    def __init__(self, evaluator_model, args, preloaded_model=None): 
+        super(LocalEvaluator, self).__init__(args)
+        self.model_name = model_names_list[evaluator_model]
+        if preloaded_model is None:
+            self.evaluator_model = LocalVLLM(self.model_name, self.model_name)
+        else:
+            self.evaluator_model = preloaded_model
+    
+    def create_conv(self, full_prompt, system_prompt=None):
+        if system_prompt is None:
+            system_prompt = self.system_prompt
+        
+        conv = get_conversation_template(self.evaluator_name)
+        conv.system = system_prompt
+        conv.append_message(conv.roles[0], full_prompt)
+        
+        return conv.get_prompt()
+    
+    def judge_score(self, attack_prompt_list, target_response_list):
+        convs_list = [
+                    self.create_conv(self.get_evaluator_prompt(prompt, response)) 
+                    for prompt, response in zip(attack_prompt_list, target_response_list)
+                ]
+
+        print(f'\tQuerying evaluator with {len(attack_prompt_list)} prompts (to evaluate judge scores)', flush=True)
+
+        raw_outputs = self.evaluator_model.generate_batch(convs_list, 
+                                                        max_tokens = self.max_n_tokens,
+                                                        temperature = self.temperature)
+        
+        outputs = [self.process_output_judge_score(raw_output) for raw_output in raw_outputs]
+        return outputs
+    
+    def on_topic_score(self, attack_prompt_list, original_prompt):
+        convs_list = [
+                    self.create_conv(self.get_evaluator_prompt_on_topic(prompt), system_prompt=self.system_prompt_on_topic)
+                    for prompt in attack_prompt_list
+        ]
+
+        print(f'\tQuerying evaluator with {len(attack_prompt_list)} prompts (to evaluate on-topic scores)', flush=True)
+        raw_outputs = self.evaluator_model.generate_batch(convs_list, 
+                                                        max_tokens = self.max_n_tokens,
+                                                        temperature = self.temperature)
+        outputs = [self.process_output_on_topic_score(raw_output) for raw_output in raw_outputs]
+        return outputs

@@ -12,12 +12,12 @@ import json
 import os
 import gc
 import torch
-from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+from vllm.distributed.parallel_state import destroy_model_parallel
 from collections import defaultdict
 
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from utils import model_names_list
 from global_config import get_config  
 
@@ -141,7 +141,13 @@ def main(args):
         args.target_str = target
         attack_llm, target_llm = load_attack_and_target_models(args)
         print('Done loading attacker and target!', flush=True)
-        evaluator_llm = load_evaluator(args)
+        if args.attack_model == args.evaluator_model:
+            evaluator_llm = load_evaluator(args, preloaded_model=attack_llm)
+        elif args.traget_model == args.evaluator_model:
+            evaluator_llm = load_evaluator(args, preloaded_model=target_llm)
+        else:
+            evaluator_llm = load_evaluator(args, preloaded_model=None)
+
         print('Done loading evaluator!', flush=True)
         original_prompt = goal
         # if i == 1:
@@ -177,7 +183,7 @@ def main(args):
                                     parent_id='NA') for _ in range(batchsize)]
 
         for conv in convs_list:
-            conv.set_system_message(system_prompt)
+            conv.system = system_prompt
 
         # Begin TAP
 

@@ -6,7 +6,9 @@ import common
 from config import (FALCON_PATH, LLAMA_PATH, TARGET_TEMP, TARGET_TOP_P,
                     VICUNA_PATH)
 from language_models import HuggingFace
-
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from utils import get_model_path_and_template, model_names_list
 
 def load_attack_and_target_models(args):
     targetLM = TargetLM(model_name = args.target_model, 
@@ -127,30 +129,19 @@ def load_indiv_model(model_name, device=None):
 
 def get_model_path_and_template(model_name):
     full_model_dict={
-        "gpt-4":{
-            "path":"gpt-4",
-            "template":"gpt-4"
-        },
-        "gpt-3.5-turbo": {
-            "path":"gpt-3.5-turbo",
-            "template":"gpt-3.5-turbo"
-        },
-        "vicuna":{
-            "path":VICUNA_PATH,
-            "template":"vicuna_v1.1"
-        },
         "llama":{
             "path":LLAMA_PATH,
             "template":"llama-2"
-        },
-        "falcon":{
-            "path":FALCON_PATH,
-            "template":"falcon"
         },
         "phi2":{
             "path":"microsoft/phi-2",
             "template":"llama-2"
         },
+        "deepseek":{
+            "path":f"{model_names_list['deepseek']}",
+            "template":"deepseek"
+        },
+
     }
     path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
     return path, template
