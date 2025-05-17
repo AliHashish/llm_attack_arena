@@ -104,10 +104,17 @@ def load_indiv_model(model_name, device=None):
         lm = HuggingFace(model_name, model, tokenizer)
 
     else:
+        print(f"\n\n\nmodelPath: {model_path}\n\n\n")
+        model_name_absolute = "/".join(model_path.split("/")[-2:])
+        print(model_name_absolute)
         model = AutoModelForCausalLM.from_pretrained(
-                model_path, 
+                model_name_absolute, 
                 torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,device_map="auto").eval()
+                low_cpu_mem_usage=True).eval()
+        # model = AutoModelForCausalLM.from_pretrained(
+        #         model_name_absolute, 
+        #         torch_dtype=torch.float16,
+        #         low_cpu_mem_usage=True).to("cuda")
 
         tokenizer = AutoTokenizer.from_pretrained(
             model_path,
@@ -130,7 +137,7 @@ def load_indiv_model(model_name, device=None):
 def get_model_path_and_template(model_name):
     full_model_dict={
         "llama":{
-            "path":LLAMA_PATH,
+            "path":"meta-llama/Llama-3.2-1B",
             "template":"llama-2"
         },
         "phi2":{
