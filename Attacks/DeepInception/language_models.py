@@ -81,8 +81,9 @@ class GPT(LanguageModel):
     API_QUERY_SLEEP = 2
     API_MAX_RETRY = 5
     API_TIMEOUT = 20
-    client = openai.OpenAI()
-    client.api_key = os.environ['OPENAI_API_KEY']
+    # client = openai.OpenAI()
+    # client.api_key = os.environ['OPENAI_API_KEY']
+    client = None
     def generate(self, conv: List[Dict], 
                 max_n_tokens: int, 
                 temperature: float,
