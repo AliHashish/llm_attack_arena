@@ -29,9 +29,13 @@ from utils import model_names_list
 
 MAX_LEN = 2048
 
-def truncate_prompts(tokenizer, prompt, max_len):
-    tokens = tokenizer(prompt, truncation=True, max_length=max_len, return_tensors="pt")["input_ids"]
-    return tokenizer.decode(tokens[0], skip_special_tokens=True)
+def truncate_prompts(tokenizer, prompts, max_len):
+    truncated = []
+    for prompt in prompts:
+        tokens = tokenizer(prompt, truncation=True, max_length=max_len, return_tensors="pt")["input_ids"]
+        truncated_prompt = tokenizer.decode(tokens[0], skip_special_tokens=True)
+        truncated.append(truncated_prompt)
+    return truncated
 
 class LLM:
     def __init__(self):
