@@ -44,12 +44,12 @@ class HuggingFace(LanguageModel):
                 top_p=top_p,
                 max_tokens=max_n_tokens,
                 stop_token_ids=[self.eos_token_ids] if isinstance(self.eos_token_ids, int) else self.eos_token_ids,
-            )
+                )
 
-            outputs = self.model.generate(full_prompts_list, sampling_params)
-            outputs_list = [o.outputs[0].text for o in outputs]
+                outputs = self.model.generate(full_prompts_list, sampling_params)
+                outputs_list = [o.outputs[0].text for o in outputs]
 
-            return outputs_list
+                return outputs_list
         # Batch generation
         else:
             #Attacker
