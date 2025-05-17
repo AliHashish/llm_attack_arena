@@ -8,7 +8,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, MAX_PARALLEL_STREAMS,VICUNA_ATTACK_PATH
 from vllm import LLM as vllm
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from utils import model_names_list
+from utils import model_names_list, get_model_path_and_template
 
 def load_target_model(args):
     target_llm = TargetLLM(model_name = args.target_model, 
@@ -253,22 +253,4 @@ def load_indiv_model(model_name, device=None):
 
         lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template
-
-def get_model_path_and_template(model_name):
-    full_model_dict={
-        "llama":{
-            "path": LLAMA_PATH,
-            "template":"llama-2"
-        },
-        "phi2":{
-            "path": "microsoft/phi-2",
-            "template": "llama-2"
-        }
-    }
-    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
-    return path, template
-
-
-
-    
+    return lm, template 

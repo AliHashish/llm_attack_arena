@@ -11,11 +11,11 @@ from utils import model_names_list
 from system_prompts import get_evaluator_system_prompt_for_judge, get_evaluator_system_prompt_for_on_topic
 from language_models import GPT
 
-def load_evaluator(args):
+def load_evaluator(args, preloaded_model=None):
     if "gpt" in args.evaluator_model:
         return GPTEvaluator(args)
     elif args.evaluator_model in model_names_list:
-        return LocalEvaluator(args.evaluator_model, args)
+        return LocalEvaluator(args.evaluator_model, args, preloaded_model)
     elif args.evaluator_model == "no-evaluator":
         return NoEvaluator(args)
     else:
@@ -125,7 +125,7 @@ class GPTEvaluator(EvaluatorBase):
         return outputs
 
 class LocalEvaluator(EvaluatorBase):
-    def __init__(self, evaluator_model, args): 
+    def __init__(self, evaluator_model, args, preloaded_model=None): 
         super(LocalEvaluator, self).__init__(args)
         model_name = model_names_list[evaluator_model]
         self.evaluator_model = LocalVLLM(model_name, model_name)

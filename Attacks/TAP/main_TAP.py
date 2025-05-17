@@ -141,7 +141,13 @@ def main(args):
         args.target_str = target
         attack_llm, target_llm = load_attack_and_target_models(args)
         print('Done loading attacker and target!', flush=True)
-        evaluator_llm = load_evaluator(args)
+        if attack_llm == args.evaluator_model:
+            evaluator_llm = load_evaluator(args, preloaded_model=attack_llm)
+        elif target_llm == args.evaluator_model:
+            evaluator_llm = load_evaluator(args, preloaded_model=target_llm)
+        else:
+            evaluator_llm = load_evaluator(args, preloaded_model=None)
+
         print('Done loading evaluator!', flush=True)
         original_prompt = goal
         # if i == 1:

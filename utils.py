@@ -21,3 +21,21 @@ def get_developer(model_name):
     else:
         raise ValueError(f"Unknown model name: {model_name}. Available models are {list(developers.keys())}.")
     
+def get_model_path_and_template(model_name):
+    full_model_dict={
+        "llama":{
+            "path": "meta-llama/Llama-3.2-1B",
+            "template":"llama-2"
+        },
+        "phi2":{
+            "path": "microsoft/phi-2",
+            "template": "llama-2"
+        },
+        "deepseek":{
+            "path": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+            "template": "llama-2"
+        }
+    }
+    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
+    return path, template
+    

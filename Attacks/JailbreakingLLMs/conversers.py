@@ -5,6 +5,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, VICUNA_ATTACK_PATH
 from vllm import LLM as vllm
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from utils import get_model_path_and_template
 
 def load_attack_and_target_models(args):
     # Load attack model and tokenizer
@@ -206,46 +209,4 @@ def load_indiv_model(model_name, device=None):
 
         lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template
-
-def get_model_path_and_template(model_name):
-    full_model_dict={
-        "gpt-4":{
-            "path":"gpt-4",
-            "template":"gpt-4"
-        },
-        "gpt-3.5-turbo": {
-            "path":"gpt-3.5-turbo",
-            "template":"gpt-3.5-turbo"
-        },
-        "vicuna13":{
-            "path":VICUNA_ATTACK_PATH,
-            "template":"vicuna_v1.3"
-        },
-        "vicuna":{
-            "path":VICUNA_PATH,
-            "template":"vicuna_v1.3"
-        },
-        "llama":{
-            "path":LLAMA_PATH,
-            "template":"llama-2"
-        },
-        "claude-instant-1":{
-            "path":"claude-instant-1",
-            "template":"claude-instant-1"
-        },
-        "claude-2":{
-            "path":"claude-2",
-            "template":"claude-2"
-        },
-        "palm-2":{
-            "path":"palm-2",
-            "template":"palm-2"
-        }
-    }
-    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
-    return path, template
-
-
-
-    
+    return lm, template   
