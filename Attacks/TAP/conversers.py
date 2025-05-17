@@ -230,7 +230,7 @@ def load_indiv_model(model_name, device=None):
         model = APIModelVicuna13B(model_name)
     else:
         if model_name in model_names_list.keys():
-            model = LocalVLLM(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
+            model = LocalVLLM(model_path=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
 
         else:
             model = AutoModelForCausalLM.from_pretrained(
