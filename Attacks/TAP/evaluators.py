@@ -128,7 +128,7 @@ class LocalEvaluator(EvaluatorBase):
     def __init__(self, evaluator_model, args, preloaded_model=None): 
         super(LocalEvaluator, self).__init__(args)
         self.model_name = model_names_list[evaluator_model]
-        if preloaded_model is not None:
+        if preloaded_model is None:
             self.evaluator_model = LocalVLLM(self.model_name, self.model_name)
         else:
             self.evaluator_model = preloaded_model
