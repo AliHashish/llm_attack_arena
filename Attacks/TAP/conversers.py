@@ -151,7 +151,9 @@ class AttackLLM():
         if any([output for output in valid_outputs if output is None]):
             print(f"Failed to generate output after {self.max_n_attack_attempts} attempts. Terminating.")
         return valid_outputs
-
+    
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
 class TargetLLM():
     """
         Base class for target language models.
@@ -209,6 +211,9 @@ class TargetLLM():
                                                         )
             )
         return outputs_list
+    
+    def generate_batch(self, prompts, temperature=0.01, max_tokens=30, repetition_penalty=1.0, batch_size=8):
+        return self.model.generate_batch(prompts, temperature=temperature, max_tokens=max_tokens, repetition_penalty=repetition_penalty, batch_size=batch_size)
 
 
 
@@ -253,26 +258,4 @@ def load_indiv_model(model_name, device=None):
 
         lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template
-
-def get_model_path_and_template(model_name):
-    full_model_dict={
-        "llama":{
-            "path": LLAMA_PATH,
-            "template":"llama-2"
-        },
-        "phi2":{
-            "path": "microsoft/phi-2",
-            "template": "llama-2"
-        },
-        "deepseek":{
-            "path":f"{model_names_list['deepseek']}",
-            "template":"deepseek"
-        },
-    }
-    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
-    return path, template
-
-
-
-    
+    return lm, template 
