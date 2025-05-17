@@ -91,6 +91,7 @@ class AutoDAN(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/AutoDAN/start", stdout=subprocess.PIPE, stderr=subprocess.STDOUT,text=True,bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -130,7 +131,8 @@ class AutoDAN(BaseAttackModel):
 #         try:
 #             with subprocess.Popen(cmd, cwd="./Attacks/llm-attacks/experiments", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
 #                 for line in sp.stdout:
-#                     logging.info(line)
+# print(line)                    
+# logging.info(line)
 #         finally:
 #             sp.terminate()
 #             sp.wait()
@@ -160,6 +162,7 @@ class GCG(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/llm-attacks", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -194,6 +197,7 @@ class GPTFuzz(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/GPTFuzz", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -257,6 +261,7 @@ class Tap(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/TAP", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -289,6 +294,7 @@ class Pair(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/JailbreakingLLMs", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -316,6 +322,7 @@ class Jailbroken(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/jailbroken/scripts/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -375,6 +382,7 @@ class Parameters(BaseAttackModel):
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/Parameter/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
@@ -403,6 +411,7 @@ class Customized(BaseAttackModel):
             ##TODO Change the path to the directory where your attack is located
             with subprocess.Popen(cmd, cwd="./Attacks/Customized_PATH/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
+                    print(line)
                     logging.info(line)
         finally:
             sp.terminate()
