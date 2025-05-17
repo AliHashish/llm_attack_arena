@@ -8,7 +8,7 @@ from config import (FALCON_PATH, LLAMA_PATH, TARGET_TEMP, TARGET_TOP_P,
 from language_models import HuggingFace
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from utils import get_model_path_and_template
+from utils import get_model_path_and_template, model_names_list
 
 def load_attack_and_target_models(args):
     targetLM = TargetLM(model_name = args.target_model, 
@@ -126,3 +126,26 @@ def load_indiv_model(model_name, device=None):
         lm = HuggingFace(model_name, model, tokenizer)
     
     return lm, template
+
+def get_model_path_and_template(model_name):
+    full_model_dict={
+        "llama":{
+            "path":LLAMA_PATH,
+            "template":"llama-2"
+        },
+        "phi2":{
+            "path":"microsoft/phi-2",
+            "template":"llama-2"
+        },
+        "deepseek":{
+            "path":f"{model_names_list['deepseek']}",
+            "template":"deepseek"
+        },
+
+    }
+    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
+    return path, template
+
+
+
+    
