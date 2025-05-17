@@ -237,8 +237,8 @@ class Tap(BaseAttackModel):
         super().__init__()
         self.parameters = {
             'target-model':model,
-            'attack-model':'vicuna13', #gpt-3.5-turbo or local llm
-            'evaluator-model':"gpt-4-1106-preview",
+            'attack-model':model, #gpt-3.5-turbo or local llm
+            'evaluator-model':model,
             'branching-factor':4,
             'width':10,
             'depth':10

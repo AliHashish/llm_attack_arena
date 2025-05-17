@@ -39,44 +39,17 @@ class HuggingFace(LanguageModel):
                         top_p: float = 1.0,):
         if not 'vicuna13' in self.model_name:
             with torch.no_grad():
-                inputs = self.tokenizer(full_prompts_list, return_tensors='pt', padding=True)
-                inputs = {k: v.to(self.model.device.index) for k, v in inputs.items()} 
-    
-                
-                # Batch generation
-                if temperature > 0:
-                    output_ids = self.model.generate(
-                        **inputs,
-                        max_new_tokens=max_n_tokens, 
-                        do_sample=True,
-                        temperature=temperature,
-                        eos_token_id=self.eos_token_ids,
-                        top_p=top_p,
-                    )
-                else:
-                    output_ids = self.model.generate(
-                        **inputs,
-                        max_new_tokens=max_n_tokens, 
-                        do_sample=False,
-                        eos_token_id=self.eos_token_ids,
-                        top_p=1,
-                        temperature=1, # To prevent warning messages
-                    )
-                    
-                # If the model is not an encoder-decoder type, slice off the input tokens
-                if not self.model.config.is_encoder_decoder:
-                    output_ids = output_ids[:, inputs["input_ids"].shape[1]:]
-    
-                # Batch decoding
-                outputs_list = self.tokenizer.batch_decode(output_ids, skip_special_tokens=True)
-    
-                # for key in inputs:
-                #     inputs[key].to('cpu')
-                # output_ids.to('cpu')
-                del inputs, output_ids
-                gc.collect()
-                torch.cuda.empty_cache()
-                return outputs_list
+                sampling_params = SamplingParams(
+                temperature=temperature,
+                top_p=top_p,
+                max_tokens=max_n_tokens,
+                stop_token_ids=[self.eos_token_ids] if isinstance(self.eos_token_ids, int) else self.eos_token_ids,
+            )
+
+            outputs = self.model.generate(full_prompts_list, sampling_params)
+            outputs_list = [o.outputs[0].text for o in outputs]
+
+            return outputs_list
         # Batch generation
         else:
             #Attacker

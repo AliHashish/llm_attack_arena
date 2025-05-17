@@ -2,9 +2,14 @@
 import common
 from language_models import GPT, PaLM, HuggingFace, APIModelLlama7B, APIModelVicuna13B
 import torch
+import sys
+import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, MAX_PARALLEL_STREAMS,VICUNA_ATTACK_PATH
 from vllm import LLM as vllm
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from utils import model_names_list
+
 def load_target_model(args):
     target_llm = TargetLLM(model_name = args.target_model, 
                         max_n_tokens = args.target_max_n_tokens,
@@ -221,7 +226,7 @@ def load_indiv_model(model_name, device=None):
     elif model_name == 'vicuna-api-model':
         lm = APIModelVicuna13B(model_name)
     else:
-        if 'vicuna13' in model_name:
+        if model_name in model_names_list.keys():
             model = vllm(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
 
         else:
@@ -257,8 +262,8 @@ def get_model_path_and_template(model_name):
             "template":"llama-2"
         },
         "phi2":{
-            "path": "phi2",
-            "template": "phi2"
+            "path": "microsoft/phi-2",
+            "template": "llama-2"
         }
     }
     path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]

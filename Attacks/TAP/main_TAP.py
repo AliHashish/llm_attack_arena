@@ -12,12 +12,12 @@ import json
 import os
 import gc
 import torch
-from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+from vllm.distributed.parallel_state import destroy_model_parallel
 from collections import defaultdict
 
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from utils import model_names_list
 from global_config import get_config  
 
@@ -177,7 +177,7 @@ def main(args):
                                     parent_id='NA') for _ in range(batchsize)]
 
         for conv in convs_list:
-            conv.set_system_message(system_prompt)
+            conv.system = system_prompt
 
         # Begin TAP
 
