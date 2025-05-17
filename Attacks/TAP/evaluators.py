@@ -138,7 +138,7 @@ class LocalEvaluator(EvaluatorBase):
             system_prompt = self.system_prompt
         
         conv = get_conversation_template(self.evaluator_name)
-        conv.set_system_message(system_prompt)
+        conv.system = system_prompt
         conv.append_message(conv.roles[0], full_prompt)
         
         return conv.get_prompt()
