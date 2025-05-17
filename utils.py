@@ -1,6 +1,6 @@
 import os
 from huggingface_hub import login as huglogin
-huglogin("Add_Your_Token_Here")
+#huglogin("Add_Your_Token_Here")
 
 model_names_list = {
     'phi2':"microsoft/phi-2",
