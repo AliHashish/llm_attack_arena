@@ -236,13 +236,13 @@ class DeepInception(BaseAttackModel):
 
 
 class Tap(BaseAttackModel):
-    def __init__(self,model):
+    def __init__(self,model, attack_model, evaluation_model):
         # Set up default parameters
         super().__init__()
         self.parameters = {
             'target-model':model,
-            'attack-model':model, #gpt-3.5-turbo or local llm
-            'evaluator-model':model,
+            'attack-model':attack_model, #gpt-3.5-turbo or local llm
+            'evaluator-model':evaluation_model,
             'branching-factor':4,
             'width':10,
             'depth':10
