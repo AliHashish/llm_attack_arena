@@ -390,7 +390,7 @@ class LocalVLLM(LLM):
 
         #     prompt_input = conv_temp.get_prompt()
         #     prompt_inputs.append(prompt_input)
-        truncate_prompts(self.tokenizer, prompts, MAX_LEN)
+        prompts = truncate_prompts(self.tokenizer, prompts, MAX_LEN)
         sampling_params = SamplingParams(temperature=temperature, max_tokens=max_tokens,top_p=top_p,top_k=top_k,repetition_penalty=repetition_penalty,frequency_penalty=frequency_penalty,presence_penalty=presence_penalty,n=n)
         results = self.model.generate(
             prompts, sampling_params, use_tqdm=False)
