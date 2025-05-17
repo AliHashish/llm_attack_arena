@@ -6,8 +6,8 @@ import sys
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from config import VICUNA_PATH, LLAMA_PATH, ATTACK_TEMP, TARGET_TEMP, ATTACK_TOP_P, TARGET_TOP_P, MAX_PARALLEL_STREAMS,VICUNA_ATTACK_PATH
-from vllm import LLM as vllm
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from models import LocalVLLM
 from utils import model_names_list, get_model_path_and_template
 
 def load_target_model(args):
@@ -230,7 +230,7 @@ def load_indiv_model(model_name, device=None):
         model = APIModelVicuna13B(model_name)
     else:
         if model_name in model_names_list.keys():
-            model = vllm(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
+            model = LocalVLLM(model=model_path, gpu_memory_utilization=0.9, dtype=torch.float16)
 
         else:
             model = AutoModelForCausalLM.from_pretrained(
