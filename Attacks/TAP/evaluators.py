@@ -127,7 +127,8 @@ class GPTEvaluator(EvaluatorBase):
 class LocalEvaluator(EvaluatorBase):
     def __init__(self, evaluator_model, args): 
         super(LocalEvaluator, self).__init__(args)
-        self.evaluator_model = LocalVLLM(evaluator_model, evaluator_model)
+        model_name = model_names_list[evaluator_model]
+        self.evaluator_model = LocalVLLM(model_name, model_name)
     
     def create_conv(self, full_prompt, system_prompt=None):
         if system_prompt is None:
