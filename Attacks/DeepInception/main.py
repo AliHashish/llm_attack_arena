@@ -145,8 +145,8 @@ if __name__ == '__main__':
     model_name_path = model_name.replace("/","_")
     # if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results"):
             # os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
-    # with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInceptions_{model_name_path}.json', 'w') as f:
+    # with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
     if not os.path.exists(f"/content/llm_attack_arena/Attacks/DeepInception/Results"):
             os.makedirs(f"/content/llm_attack_arena/Attacks/DeepInception/Results")
-    with open(f'/content/llm_attack_arena/Attacks/DeepInception/Results/DeepInceptions_{model_name_path}.json', 'w') as f:
+    with open(f'/content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
         json.dump(final_results, f, indent=4)
