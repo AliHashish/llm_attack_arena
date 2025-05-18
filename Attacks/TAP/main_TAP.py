@@ -38,8 +38,6 @@ def clean_attacks_and_convs(attack_list, convs_list):
         Remove any failed attacks (which appear as None) and corresponding conversations
     """
     tmp = [(a, c) for (a, c) in zip(attack_list, convs_list) if a is not None]
-    if not tmp:
-        return [], []
     tmp = [*zip(*tmp)]
     attack_list, convs_list = list(tmp[0]), list(tmp[1])
 
