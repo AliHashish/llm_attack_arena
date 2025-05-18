@@ -34,7 +34,7 @@ def get_model_path_and_template(model_name):
             "template": "llama-2"
         },
         "deepseek":{
-            "path": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+            "path": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
             "template": "llama-2"
         }
     }
