@@ -1,7 +1,7 @@
 [
     {
         "attack": "Parameters",
-        "success_rate": "54 / 60",
+        "attack success rate": "54 / 60",
         "efficiency": "1258 / 5400"
     }
 ]
