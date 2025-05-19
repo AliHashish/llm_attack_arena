@@ -5,7 +5,8 @@ from huggingface_hub import login as huglogin
 model_names_list = {
     'phi2':"microsoft/phi-2",
     'llama':"meta-llama/Llama-3.2-1B",
-    'deepseek': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B'
+    'deepseek': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
+    'qwen': 'Qwen/Qwen3-0.6B'
 }
 
 developers = {
@@ -35,6 +36,10 @@ def get_model_path_and_template(model_name):
         },
         "deepseek":{
             "path": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+            "template": "llama-2"
+        },
+        "qwen":{
+            "path": "Qwen/Qwen3-0.6B",
             "template": "llama-2"
         }
     }
