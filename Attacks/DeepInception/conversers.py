@@ -133,26 +133,3 @@ def load_indiv_model(model_name, device=None):
         lm = HuggingFace(model_name, model, tokenizer)
     
     return lm, template
-
-def get_model_path_and_template(model_name):
-    full_model_dict={
-        "llama":{
-            "path":"meta-llama/Llama-3.2-1B",
-            "template":"llama-2"
-        },
-        "phi2":{
-            "path":"microsoft/phi-2",
-            "template":"llama-2"
-        },
-        "deepseek":{
-            "path":f"{model_names_list['deepseek']}",
-            "template":"deepseek"
-        },
-
-    }
-    path, template = full_model_dict[model_name]["path"], full_model_dict[model_name]["template"]
-    return path, template
-
-
-
-    
