@@ -66,6 +66,73 @@ class HuggingFace(LanguageModel):
         torch.cuda.empty_cache()
 
         return outputs_list
+    
+    def batched_generate_llama(self, 
+                        full_prompts_list,
+                        max_n_tokens: int, 
+                        temperature: float,
+                        top_p: float = 1.0):
+        import gc
+        import torch
+
+        # Get prompt lengths without padding
+        prompt_lens = [
+            len(self.tokenizer(p, return_tensors="pt", add_special_tokens=False)["input_ids"][0])
+            for p in full_prompts_list
+        ]
+
+        # Tokenize with padding
+        inputs = self.tokenizer(full_prompts_list, return_tensors='pt', padding=True)
+        # inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
+
+        # Generate
+        generate_kwargs = {
+            "max_new_tokens": max_n_tokens,
+            "eos_token_id": self.eos_token_ids,
+            "top_p": top_p,
+            "pad_token_id": self.tokenizer.pad_token_id,
+            "repetition_penalty": 1.1,
+            "do_sample": temperature > 0,
+            "temperature": temperature if temperature > 0 else 1.0,
+            "use_cache": True,
+            "return_dict_in_generate": True,
+            "output_scores": False
+        }
+
+        output_ids = self.model.generate(**inputs, **generate_kwargs)
+        
+        # For Llama-2, we need to handle the chat format properly
+        # The model should generate after the [/INST] token
+        inst_token_id = self.tokenizer.encode("[/INST]")[0]
+        
+        # Find the position of [/INST] in each sequence
+        inst_positions = []
+        for seq in output_ids.sequences:
+            try:
+                pos = (seq == inst_token_id).nonzero(as_tuple=True)[0][0]
+                inst_positions.append(pos + 1)  # +1 to start after [/INST]
+            except:
+                inst_positions.append(0)  # If [/INST] not found, take from start
+        
+        # Slice off everything before and including [/INST]
+        output_ids_trimmed = []
+        for i, seq in enumerate(output_ids.sequences):
+            start_pos = inst_positions[i]
+            trimmed = seq[start_pos:]  # remove everything up to and including [/INST]
+            output_ids_trimmed.append(trimmed)
+
+        # Decode only the completions
+        outputs_list = self.tokenizer.batch_decode(output_ids_trimmed, skip_special_tokens=True)
+
+        # Cleanup
+        for key in inputs:
+            inputs[key].to('cpu')
+        del inputs, output_ids, output_ids_trimmed
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        return outputs_list
+
 
     def extend_eos_tokens(self):        
         # Add closing braces for Vicuna/Llama eos when using attacker model

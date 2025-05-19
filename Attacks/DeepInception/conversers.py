@@ -1,4 +1,3 @@
-
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -8,7 +7,8 @@ from config import (FALCON_PATH, LLAMA_PATH, TARGET_TEMP, TARGET_TOP_P,
 from language_models import HuggingFace
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from utils import get_model_path_and_template, model_names_list
+from utils import get_model_path_and_template, model_names_list, get_model_path
+import models
 
 def load_attack_and_target_models(args):
     targetLM = TargetLM(model_name = args.target_model, 
@@ -71,68 +71,57 @@ class TargetLM():
             full_prompts = [conv.to_openai_api_messages()]
         else:
             full_prompts = conv.get_prompt() 
-        outputs_list = self.model.batched_generate(full_prompts, 
+            # print(f"full_prompts: {full_prompts}")
+        
+        if 'llama' in self.model_name:
+            outputs_list = self.model.batched_generate_llama(full_prompts, 
                                                         max_n_tokens = self.max_n_tokens,  
                                                         temperature = self.temperature,
                                                         top_p = self.top_p
                                                     )
+        else:
+            outputs_list = self.model.batched_generate(full_prompts, 
+                                                        max_n_tokens = self.max_n_tokens,  
+                                                        temperature = self.temperature,
+                                                        top_p = self.top_p
+                                                    )
+        print(f"outputs_list: {outputs_list}")
         return outputs_list
 
 
 
 def load_indiv_model(model_name, device=None):
     model_path, template = get_model_path_and_template(model_name)
-    if model_name in ["gpt-3.5-turbo", "gpt-4"]:
-        lm = GPT(model_name)
-    elif model_name == 'falcon':
-        model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            trust_remote_code=True,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-            device_map="auto",
-        ).eval()
-
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_path, trust_remote_code=True,
-        )
-
-        model.config.eos_token_id = tokenizer.eos_token_id
-        model.config.pad_token_id = tokenizer.pad_token_id
-        tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.padding_side = 'left'
-        lm = HuggingFace(model_name, model, tokenizer)
-
-    else:
+    if model_name in model_names_list.keys():
+        model_name = model_names_list[model_name]
+        model_path = get_model_path(model_name)
+        directory_name = model_name
         print(f"\n\n\nmodelPath: {model_path}\n\n\n")
         model_name_absolute = "/".join(model_path.split("/")[-2:])
         print(model_name_absolute)
-        model = AutoModelForCausalLM.from_pretrained(
-                model_name_absolute, 
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True).eval()
+        model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name, dtype="float16")
         # model = AutoModelForCausalLM.from_pretrained(
         #         model_name_absolute, 
         #         torch_dtype=torch.float16,
         #         low_cpu_mem_usage=True).to("cuda")
 
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_path,
-            use_fast=False
-        ) 
+        # tokenizer = AutoTokenizer.from_pretrained(
+        #     model_name_absolute,
+        #     use_fast=False
+        # ) 
 
-        if 'llama-2' in model_path.lower():
-            tokenizer.pad_token = tokenizer.unk_token
-            tokenizer.padding_side = 'left'
-        if 'vicuna' in model_path.lower():
-            tokenizer.pad_token = tokenizer.eos_token
-            tokenizer.padding_side = 'left'
-        if not tokenizer.pad_token:
-            tokenizer.pad_token = tokenizer.eos_token
+        # if 'llama-2' in model_path.lower():
+        #     tokenizer.pad_token = tokenizer.unk_token
+        #     tokenizer.padding_side = 'left'
+        # if 'vicuna' in model_path.lower():
+        #     tokenizer.pad_token = tokenizer.eos_token
+        #     tokenizer.padding_side = 'left'
+        # if not tokenizer.pad_token:
+        #     tokenizer.pad_token = tokenizer.eos_token
 
-        lm = HuggingFace(model_name, model, tokenizer)
+        # lm = HuggingFace(model_name, model, tokenizer)
     
-    return lm, template
+    return model, template
 
 def get_model_path_and_template(model_name):
     full_model_dict={

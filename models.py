@@ -346,8 +346,8 @@ class LocalVLLM(LLM):
                  model_name,
                  model_path,
                  gpu_memory_utilization=0.90,
+                 dtype="float16",
                  system_message=None,
-
                  ):
         super().__init__()
 
@@ -355,7 +355,7 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-        self.model = VLLM(model=model_name)
+        self.model = VLLM(model=model_name, dtype=dtype)
         
         if system_message is None and 'llama' in model_path:
             # monkey patch for latest FastChat to use llama2's official system message
