@@ -355,7 +355,7 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-        if 'deepseek' in model_path:
+        if 'deepseek' or 'Qwen' in model_path:
             self.model = VLLM(model=model_name, dtype="float16")
         else:
             self.model = VLLM(model=model_name)
