@@ -51,6 +51,9 @@ def process_raw_jailbreak_prompts(model_name,question_count):
         model_name = model_names_list[args.model]
         model_path = get_model_path(model_name)
         directory_name = args.model
+
+        print(f"\n\n\nmodelPath: {model_path}\n\n\n")
+        model_name_absolute = "/".join(model_path.split("/")[-2:])
     else:
         model_name = 'unknown'
         raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
@@ -58,7 +61,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     if openAI_model:
         local_model = models.OpenAILLM(model_path)
     else:
-        local_model = models.LocalVLLM(model_path=model_path, model_name=model_name)
+        local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
 
     # df = pd.read_csv(file_path)
     # df = df.sample(frac=1).reset_index(drop=True)

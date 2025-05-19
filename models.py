@@ -355,7 +355,10 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-        self.model = VLLM(model=model_name)
+        if 'deepseek' in model_path:
+            self.model = VLLM(model=model_name, dtype="float16")
+        else:
+            self.model = VLLM(model=model_name)
         
         if system_message is None and 'llama' in model_path:
             # monkey patch for latest FastChat to use llama2's official system message
