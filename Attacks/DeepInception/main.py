@@ -144,8 +144,8 @@ if __name__ == '__main__':
                 if i == 0:
                     continue
                 final_results.append({'prompt': data['inception_attack'], 'response': target_response_list[0], 'question': question_bkp[i-1],"iteration":CURRENT_ITERATION })
-                print(f"prompt: {data['inception_attack']}\nresponse: {target_response_list[0]}\nquestion: {question_bkp[i-1]}\niteration: {CURRENT_ITERATION}")
-                print(f"final_results: {final_results}")
+                # print(f"prompt: {data['inception_attack']}\nresponse: {target_response_list[0]}\nquestion: {question_bkp[i-1]}\niteration: {CURRENT_ITERATION}")
+                # print(f"final_results: {final_results}")
             CURRENT_ITERATION+= 1
                 # print("prompt: ", data['inception_attack'], "response: ", target_response_list, "question: ", question_bkp[i], "model: ", args.target_model)
 
