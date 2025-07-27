@@ -143,8 +143,8 @@ if __name__ == '__main__':
                 target_response_list = targetLM.get_response(data['inception_attack'].replace("ඞ", question), args.defense)
                 results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
                 # print(i)
-                if i == 0:
-                    continue
+                # if i == 0:
+                #     continue
                 # final_results.append({'prompt': data['inception_attack'], 'response': target_response_list[0], 'question': question_bkp[i-1],"iteration":CURRENT_ITERATION })
                 final_results.append({'prompt': data['inception_attack'], 'response': target_response_list[0], 'question': question_bkp[i],"iteration":CURRENT_ITERATION })
                 # print(f"prompt: {data['inception_attack']}\nresponse: {target_response_list[0]}\nquestion: {question_bkp[i-1]}\niteration: {CURRENT_ITERATION}")
