@@ -1,4 +1,5 @@
 
+import models
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -102,65 +103,49 @@ class TargetLM():
             full_prompts = [conv.to_openai_api_messages()]
         else:
             full_prompts = conv.get_prompt() 
-        outputs_list = self.model.batched_generate(full_prompts, 
-                                                        max_n_tokens = self.max_n_tokens,  
+        
+        if 'llama-3' in self.model_name:
+            outputs_list = self.model.generate_batch(full_prompts,
+                                                        max_n_tokens = self.max_n_tokens,
                                                         temperature = self.temperature,
-                                                        top_p = self.top_p
-                                                    )
+                                                        top_p = self.top_p)
+        else:
+            outputs_list = self.model.batched_generate(full_prompts, 
+                                                            max_n_tokens = self.max_n_tokens,  
+                                                            temperature = self.temperature,
+                                                            top_p = self.top_p
+                                                        )
         return outputs_list
 
 
 
 def load_indiv_model(model_name, device=None):
     model_path, template = get_model_path_and_template(model_name)
-    if model_name in ["gpt-3.5-turbo", "gpt-4"]:
-        lm = GPT(model_name)
-    elif model_name == 'falcon':
-        model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            trust_remote_code=True,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-            device_map="auto",
-        ).eval()
+    print(f"\n\n\nmodelPath: {model_path}\n\n\n")
+    model_name_absolute = "/".join(model_path.split("/")[-2:])
+    print(model_name_absolute)
+    model = AutoModelForCausalLM.from_pretrained(
+            model_name_absolute, 
+            torch_dtype=torch.float16,
+            low_cpu_mem_usage=True).eval().to("cuda")
 
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_path, trust_remote_code=True,
-        )
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_path,
+        use_fast=False
+    ) 
 
-        model.config.eos_token_id = tokenizer.eos_token_id
-        model.config.pad_token_id = tokenizer.pad_token_id
+    if 'llama-3' in model_path.lower():
+        #use vllm
+        tokenizer.pad_token = tokenizer.unk_token
+        tokenizer.padding_side = 'left'
+        local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
+        return local_model, template
+    if 'vicuna' in model_path.lower():
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.padding_side = 'left'
-        lm = HuggingFace(model_name, model, tokenizer)
+    if not tokenizer.pad_token:
+        tokenizer.pad_token = tokenizer.eos_token
 
-    else:
-        print(f"\n\n\nmodelPath: {model_path}\n\n\n")
-        model_name_absolute = "/".join(model_path.split("/")[-2:])
-        print(model_name_absolute)
-        model = AutoModelForCausalLM.from_pretrained(
-                model_name_absolute, 
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True).eval().to("cuda")
-        # model = AutoModelForCausalLM.from_pretrained(
-        #         model_name_absolute, 
-        #         torch_dtype=torch.float16,
-        #         low_cpu_mem_usage=True).to("cuda")
-
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_path,
-            use_fast=False
-        ) 
-
-        if 'llama-2' in model_path.lower():
-            tokenizer.pad_token = tokenizer.unk_token
-            tokenizer.padding_side = 'left'
-        if 'vicuna' in model_path.lower():
-            tokenizer.pad_token = tokenizer.eos_token
-            tokenizer.padding_side = 'left'
-        if not tokenizer.pad_token:
-            tokenizer.pad_token = tokenizer.eos_token
-
-        lm = HuggingFace(model_name, model, tokenizer)
+    lm = HuggingFace(model_name, model, tokenizer)
     
     return lm, template
