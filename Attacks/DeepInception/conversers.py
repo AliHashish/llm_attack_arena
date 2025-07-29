@@ -1,5 +1,4 @@
 
-import models
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -9,6 +8,7 @@ from config import (FALCON_PATH, LLAMA_PATH, TARGET_TEMP, TARGET_TOP_P,
 from language_models import HuggingFace
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+import models
 from utils import get_model_path_and_template, model_names_list
 
 def load_attack_and_target_models(args):
