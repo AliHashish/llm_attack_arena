@@ -141,7 +141,7 @@ def load_indiv_model(model_name, device=None):
         model = AutoModelForCausalLM.from_pretrained(
                 model_name_absolute, 
                 torch_dtype=torch.float16,
-                low_cpu_mem_usage=True).eval()
+                low_cpu_mem_usage=True).eval().to("cuda")
         # model = AutoModelForCausalLM.from_pretrained(
         #         model_name_absolute, 
         #         torch_dtype=torch.float16,
