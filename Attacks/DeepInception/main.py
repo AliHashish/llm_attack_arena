@@ -72,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--target-max-n-tokens",
         type = int,
-        default = 128,
+        default = 1024,
         help = "Maximum number of generated tokens for the target."
     )
     parser.add_argument(
@@ -164,10 +164,11 @@ if __name__ == '__main__':
     # with open(f'../../Results/{directory_name}/DeepInception_{model_name}.json', 'w') as f:
     #     json.dump(final_results, f, indent=4)
     model_name_path = model_name.replace("/","_")
-    # if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results"):
-            # os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
-    # with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
-    if not os.path.exists(f"/content/llm_attack_arena/Attacks/DeepInception/Results"):
-            os.makedirs(f"/content/llm_attack_arena/Attacks/DeepInception/Results")
-    with open(f'/content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
-        json.dump(final_results, f, indent=4)
+    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results"):
+            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
+    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
+         json.dump(final_results, f, indent=4)
+    # if not os.path.exists(f"/content/llm_attack_arena/Attacks/DeepInception/Results"):
+    #         os.makedirs(f"/content/llm_attack_arena/Attacks/DeepInception/Results")
+    # with open(f'/content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
+    #     json.dump(final_results, f, indent=4)
