@@ -237,7 +237,7 @@ def load_indiv_model(model_name, device=None):
                     model_path, 
                     torch_dtype=torch.float16,
                     low_cpu_mem_usage=True,
-                    device_map="cuda:1").eval()
+                    device_map="cuda:1").eval().to("cuda")
 
 
         tokenizer = AutoTokenizer.from_pretrained(

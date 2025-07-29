@@ -246,7 +246,7 @@ def main():
             prompts = []
             outputs = []
             if not openAI_model:
-                model.eval()
+                model.eval().to("cuda")
             
             for sentence in tqdm(lines):
                 # CURRENT_REPEAT = 0
@@ -304,7 +304,7 @@ def main():
             outputs = []
             prompts = []
             if not openAI_model:
-                model.eval()
+                model.eval().to("cuda")
 
             for sentence in tqdm(lines):
                 # CURRENT_REPEAT = 0
@@ -357,7 +357,7 @@ def main():
             outputs = []
             prompts = []
             if not openAI_model:
-                model.eval()
+                model.eval().to("cuda")
 
             for sentence in tqdm(lines):
                 # CURRENT_REPEAT = 0
