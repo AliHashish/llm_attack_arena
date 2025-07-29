@@ -6,13 +6,16 @@ model_names_list = {
     'phi2':"microsoft/phi-2",
     'llama':"meta-llama/Llama-3.2-1B",
     'deepseek': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-    'qwen': 'Qwen/Qwen3-0.6B'
+    'qwen': 'Qwen/Qwen3-0.6B',
+    'gemma' : 'google/gemma-3n-E4B-it'
 }
 
 developers = {
     'phi2':"microsoft",
     'llama':"meta",
-    'deepseek': 'deepseek-ai'
+    'deepseek': 'deepseek-ai',
+    'qwen': 'Qwen',
+    'gemma': 'google'
 }
 
 def get_model_path(model_name):
@@ -40,6 +43,10 @@ def get_model_path_and_template(model_name):
         },
         "qwen":{
             "path": "Qwen/Qwen3-0.6B",
+            "template": "llama-2"
+        },
+        "gemma":{
+            "path": "google/gemma-3n-E4B-it",
             "template": "llama-2"
         }
     }
