@@ -104,7 +104,7 @@ class TargetLM():
         else:
             full_prompts = conv.get_prompt() 
         
-        if 'llama-3' in self.model_name:
+        if 'llama' in self.model_name:
             outputs_list = self.model.generate_batch(full_prompts,
                                                         max_n_tokens = self.max_n_tokens,
                                                         temperature = self.temperature,
