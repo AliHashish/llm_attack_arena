@@ -134,7 +134,7 @@ def load_indiv_model(model_name, device=None):
         use_fast=False
     ) 
 
-    if 'llama-3' in model_path.lower():
+    if 'llama' in model_path.lower():
         #use vllm
         tokenizer.pad_token = tokenizer.unk_token
         tokenizer.padding_side = 'left'
