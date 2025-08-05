@@ -355,10 +355,10 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-        if 'deepseek' or 'Qwen' in model_path:
-            self.model = VLLM(model=model_name, dtype="float16")
+        if 'deepseek' in model_path or 'Qwen' in model_path:
+            self.model = VLLM(model=model_name, dtype="float16", gpu_memory_utilization=gpu_memory_utilization)
         else:
-            self.model = VLLM(model=model_name)
+            self.model = VLLM(model=model_name, gpu_memory_utilization=gpu_memory_utilization)
         
         if system_message is None and 'llama' in model_path:
             # monkey patch for latest FastChat to use llama2's official system message
