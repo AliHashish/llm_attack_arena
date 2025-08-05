@@ -106,7 +106,7 @@ class TargetLM():
         
         if 'llama' in self.model_name:
             outputs_list = self.model.generate_batch(full_prompts,
-                                                        max_n_tokens = self.max_n_tokens,
+                                                        max_tokens = self.max_n_tokens,
                                                         temperature = self.temperature,
                                                         top_p = self.top_p)
         else:
