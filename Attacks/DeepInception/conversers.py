@@ -138,7 +138,7 @@ def load_indiv_model(model_name, device=None):
         #use vllm
         tokenizer.pad_token = tokenizer.unk_token
         tokenizer.padding_side = 'left'
-        local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
+        local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name_absolute)
         return local_model, template
     if 'vicuna' in model_path.lower():
         tokenizer.pad_token = tokenizer.eos_token
