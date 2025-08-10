@@ -357,6 +357,12 @@ class LocalVLLM(LLM):
 
         if 'deepseek' in model_path or 'Qwen' in model_path:
             self.model = VLLM(model=model_name, dtype="float16", gpu_memory_utilization=gpu_memory_utilization)
+        elif 'llama' in model_path:
+            self.model = VLLM(model=model_name, dtype="float16",
+                # tensor_parallel_size=1,   # num of GPUs to run on
+                max_model_len=110072,
+                enable_chunked_prefill=False,   # <-- important
+                gpu_memory_utilization=gpu_memory_utilization)
         else:
             self.model = VLLM(model=model_name, gpu_memory_utilization=gpu_memory_utilization)
         
