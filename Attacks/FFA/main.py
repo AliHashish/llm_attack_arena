@@ -61,7 +61,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
             prompt = template.replace("ඞ", question)
             prompts.append(local_model.create_conv_prompt(prompt))
             print(f"prompt: {prompt}")
-            target_response_list = local_model.generate_batch(prompts, max_tokens = 2048)
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500)
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
