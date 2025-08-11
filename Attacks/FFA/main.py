@@ -49,7 +49,8 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     final_results = []
     prompts = []
     current_question = 0
-    for idx, question in enumerate(datas):
+    for idx, question_list in enumerate(datas.values):
+        question = question_list[0]
         CURRENT_ITERATION = 0
         for template in FFA_templates:
             current_question += 1
@@ -64,6 +65,8 @@ def process_raw_jailbreak_prompts(model_name,question_count):
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
+            print(f"final_results[-1]: {final_results[-1]}")
+
             CURRENT_ITERATION += 1
         
     
