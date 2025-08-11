@@ -44,6 +44,10 @@ def run_attack(model_name, attack_type, args):
         print(f"Applying GCG attack to {model_name}")
         attack_instance = attack.GCG(model=model_name)
         attack_instance.run()
+    elif attack_type == "FFA":
+        print(f"Applying FFA attack to {model_name}")
+        attack_instance = attack.FFA(model=model_name)
+        attack_instance.run()
     else:
         print("Attack type not recognized.")
 

@@ -417,8 +417,31 @@ class Customized(BaseAttackModel):
             sp.terminate()
             sp.wait()
 
+class FFA(BaseAttackModel):
+    def __init__(self, model):
+        # Set up default parameters
+        super().__init__()
+        self.parameters = {
+            'model': model,
+        }
 
+    def run(self):
+        print("Running main.py with specified parameters for FFA")
+        command = "python"
+        script = "main.py"
+        args = args_to_cmd(self.parameters)
 
+        cmd = ['stdbuf', '-oL', command, '-u', script] + args
+
+        # Start the subprocess and capture its output
+        try:
+            with subprocess.Popen(cmd, cwd="./Attacks/FFA/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
+                for line in sp.stdout:
+                    print(line)
+                    logging.info(line)
+        finally:
+            sp.terminate()
+            sp.wait()
 
 
 def main():
