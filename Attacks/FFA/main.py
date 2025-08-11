@@ -56,7 +56,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
             current_question += 1
             results[idx]['qA_pairs'] = []
 
-            print(f"Question {current_question}/{len(datas) * len(FFA_templates)}")
+            print(f"Question {current_question + idx * len(FFA_templates)}/{len(datas) * len(FFA_templates)}")
 
             prompt = template.replace("ඞ", question)
             prompts.append(local_model.create_conv_prompt(prompt))
