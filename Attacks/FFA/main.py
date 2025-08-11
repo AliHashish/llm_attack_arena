@@ -28,9 +28,8 @@ final_res = []
     
 def process_raw_jailbreak_prompts(model_name,question_count):
     f = open(f'../../Data/data.csv')
-    datas = pd.read_csv(f)
+    datas = pd.read_csv(f, usecols=['goal'])
     f.close()
-    datas = datas["goal"]
     results = [{} for _ in range(len(datas))]
 
     if args.model in model_names_list.keys():
