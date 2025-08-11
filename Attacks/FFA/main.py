@@ -48,26 +48,24 @@ def process_raw_jailbreak_prompts(model_name,question_count):
         
     final_results = []
     prompts = []
-    current_question = 0
     for idx, question_list in enumerate(datas.values):
         question = question_list[0]
         CURRENT_ITERATION = 0
         for template in FFA_templates:
-            current_question += 1
+            CURRENT_ITERATION += 1
             results[idx]['qA_pairs'] = []
 
-            print(f"Question {current_question + idx * len(FFA_templates)}/{len(datas) * len(FFA_templates)}")
+            print(f"Question {CURRENT_ITERATION + idx * len(FFA_templates)}/{len(datas) * len(FFA_templates)}")
 
             prompt = template.replace("ඞ", question)
             prompts.append(local_model.create_conv_prompt(prompt))
-            print(f"prompt: {prompt}")
+            # print(f"prompt: {prompt}")
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500)
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
             print(f"final_results[-1]: {final_results[-1]}")
 
-            CURRENT_ITERATION += 1
         
     
     model_name_path = model_name.replace("/","_")
