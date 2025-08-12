@@ -355,12 +355,18 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-        if 'deepseek' in model_path or 'Qwen' in model_path:
+        if 'deepseek' in model_path:# or 'Qwen' in model_path:
             self.model = VLLM(model=model_name, dtype="float16", gpu_memory_utilization=gpu_memory_utilization)
         elif 'llama' in model_path:
             self.model = VLLM(model=model_name, dtype="float16",
                 # tensor_parallel_size=1,   # num of GPUs to run on
                 max_model_len=110072,
+                enable_chunked_prefill=False,   # <-- important
+                gpu_memory_utilization=gpu_memory_utilization)
+        elif 'Qwen' in model_path:
+            self.model = VLLM(model=model_name, dtype="float16",
+                # tensor_parallel_size=1,   # num of GPUs to run on
+                max_model_len=30000,
                 enable_chunked_prefill=False,   # <-- important
                 gpu_memory_utilization=gpu_memory_utilization)
         else:
