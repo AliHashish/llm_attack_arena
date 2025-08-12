@@ -64,7 +64,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
-            print(f"final_results[-1]: {final_results[-1]}")
+            # print(f"final_results[-1]: {final_results[-1]}")
 
         
     
