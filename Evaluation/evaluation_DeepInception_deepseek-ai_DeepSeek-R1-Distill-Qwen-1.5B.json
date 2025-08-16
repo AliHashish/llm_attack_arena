@@ -2,6 +2,7 @@
     {
         "attack": "DeepInception",
         "attack success rate": "15 / 60",
-        "efficiency": "45 / 180"
+        "efficiency": "45 / 180",
+        "model": "deepseek"
     }
 ]
