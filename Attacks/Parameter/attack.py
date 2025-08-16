@@ -111,25 +111,22 @@ def main():
     WEIGHTS_PATH = model_path
     TOKENIZER_PATH = WEIGHTS_PATH
     
-    if openAI_model:
-        model = models.OpenAILLM(model_path)
+    if "falcon" in args.model or "mpt" in args.model:
+        model = AutoModelForCausalLM.from_pretrained(
+            WEIGHTS_PATH,
+            torch_dtype=torch.bfloat16,
+            trust_remote_code=True,
+            low_cpu_mem_usage=True,
+            device_map="auto",
+        )
     else:
-        if "falcon" in args.model or "mpt" in args.model:
-            model = AutoModelForCausalLM.from_pretrained(
-                WEIGHTS_PATH,
-                torch_dtype=torch.bfloat16,
-                trust_remote_code=True,
-                low_cpu_mem_usage=True,
-                device_map="auto",
-            )
-        else:
-            model = AutoModelForCausalLM.from_pretrained(
-                WEIGHTS_PATH,
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True,
-                device_map="auto",
-            )
-        tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+        model = AutoModelForCausalLM.from_pretrained(
+            WEIGHTS_PATH,
+            torch_dtype=torch.float16,
+            low_cpu_mem_usage=True,
+            device_map="auto",
+        )
+    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
 
 
     fname = args.model
