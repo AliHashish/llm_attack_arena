@@ -1,7 +1,8 @@
 [
     {
         "attack": "DeepInception",
-        "attack success rate": "0 / 60",
-        "efficiency": "0 / 300"
+        "attack success rate": "16 / 60",
+        "efficiency": "16 / 180",
+        "model": "llama"
     }
 ]

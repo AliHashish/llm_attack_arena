@@ -1,0 +1,114 @@
+
+
+json_file: //content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_microsoft_phi-2.json
+DeepInception attack success rate:  0 / 60
+DeepInception efficiency: 0 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_meta-llama_Llama-3.2-1B.json
+DeepInception attack success rate:  16 / 60
+DeepInception efficiency: 16 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json
+DeepInception attack success rate:  15 / 60
+DeepInception efficiency: 45 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_Qwen_Qwen3-0.6B.json
+DeepInception attack success rate:  2 / 60
+DeepInception efficiency: 6 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_google_gemma-3n-E4B-it.json
+DeepInception attack success rate:  0 / 60
+DeepInception efficiency: 0 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/FFA/Results/FFA_microsoft_phi-2.json
+FFA attack success rate:  55 / 60
+FFA efficiency: 112 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/FFA/Results/FFA_meta-llama_Llama-3.2-1B.json
+FFA attack success rate:  46 / 60
+FFA efficiency: 65 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/FFA/Results/FFA_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json
+FFA attack success rate:  51 / 60
+FFA efficiency: 104 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/FFA/Results/FFA_Qwen_Qwen3-0.6B.json
+FFA attack success rate:  53 / 60
+FFA efficiency: 95 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/FFA/Results/FFA_google_gemma-3n-E4B-it.json
+FFA attack success rate:  0 / 60
+FFA efficiency: 0 / 180
+
+
+
+json_file: //content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_microsoft_phi-2.json
+TemplateJailbreak attack success rate:  60 / 60
+TemplateJailbreak efficiency: 5288 / 13860
+
+
+
+json_file: //content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_meta-llama_Llama-3.2-1B.json
+TemplateJailbreak attack success rate:  60 / 60
+TemplateJailbreak efficiency: 4595 / 13860
+
+
+
+json_file: //content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json
+TemplateJailbreak attack success rate:  60 / 60
+TemplateJailbreak efficiency: 4235 / 13860
+
+
+
+json_file: //content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_Qwen_Qwen3-0.6B.json
+TemplateJailbreak attack success rate:  60 / 60
+TemplateJailbreak efficiency: 4779 / 13860
+
+
+##handled
+json_file: //content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_google_gemma-3n-E4B-it.json
+Error processing TemplateJailbreak with model gemma and model path google_gemma-3n-E4B-it: [Errno 2] No such file or directory: '//content/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_google_gemma-3n-E4B-it.json'
+
+
+json_file: //content/llm_attack_arena/Attacks/Parameter/Results/Parameters_microsoft_phi-2.json
+Parameters attack success rate:  55 / 60
+Parameters efficiency: 2088 / 5400
+
+
+
+json_file: //content/llm_attack_arena/Attacks/Parameter/Results/Parameters_meta-llama_Llama-3.2-1B.json
+Parameters attack success rate:  54 / 60
+Parameters efficiency: 1258 / 5400
+
+
+
+json_file: //content/llm_attack_arena/Attacks/Parameter/Results/Parameters_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json
+Parameters attack success rate:  55 / 60
+Parameters efficiency: 1561 / 5400
+
+
+##handled
+json_file: //content/llm_attack_arena/Attacks/Parameter/Results/Parameters_Qwen_Qwen3-0.6B.json
+Error processing Parameter with model qwen and model path Qwen_Qwen3-0.6B: [Errno 2] No such file or directory: '//content/llm_attack_arena/Attacks/Parameter/Results/Parameters_Qwen_Qwen3-0.6B.json'
+
+
+json_file: //content/llm_attack_arena/Attacks/Parameter/Results/Parameters_google_gemma-3n-E4B-it.json
+Error processing Parameter with model gemma and model path google_gemma-3n-E4B-it: [Errno 2] No such file or directory: '//content/llm_attack_arena/Attacks/Parameter/Results/Parameters_google_gemma-3n-E4B-it.json'

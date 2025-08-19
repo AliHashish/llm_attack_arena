@@ -2,6 +2,7 @@
     {
         "attack": "TemplateJailbreak",
         "attack success rate": "60 / 60",
-        "efficiency": "4779 / 13860"
+        "efficiency": "4779 / 13860",
+        "model": "qwen"
     }
 ]
