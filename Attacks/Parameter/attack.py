@@ -254,9 +254,11 @@ def main():
                             # get ground truth generation
                         # CURRENT_REPEAT+= 1
                         if "gemma" in model_path:
+                            print("Temperature prompt:", model.create_conv_prompt(sentence, system_message=False))
                             ground_truth_generation = model.generate(
                                 model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
+                            print("Temperature response:", ground_truth_generation)
                         elif not openAI_model:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
@@ -315,9 +317,11 @@ def main():
                         #     )
                         # CURRENT_REPEAT+= 1 
                         if "gemma" in model_path:
+                            print("Top-p prompt:", model.create_conv_prompt(sentence, system_message=False))
                             ground_truth_generation = model.generate(
                                 model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
+                            print("Temperature response:", ground_truth_generation)
                         elif not openAI_model:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
@@ -372,9 +376,11 @@ def main():
                         #     )
                         # CURRENT_REPEAT+=1
                         if "gemma" in model_path:
+                            print("Top-k prompt:", model.create_conv_prompt(sentence, system_message=False))
                             ground_truth_generation = model.generate(
                                 model.create_conv_prompt(sentence, system_message=False), top_k=top_k, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
+                            print("Top-k response:", ground_truth_generation)
                         else:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
@@ -424,9 +430,11 @@ def main():
                         #         num_return_sequences=args.n_sample,
                         #     )
                         # CURRENT_REPEAT+=1
+                        print("Presence prompt:", model.create_conv_prompt(sentence, system_message=False))
                         ground_truth_generation = model.generate(
                             model.create_conv_prompt(sentence,system_message=False), presence_penalty=presence, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
                         )
+                        print("Presence response:", ground_truth_generation)
                         # outputs.extend(ground_truth_generation)
                         # prompts.extend([sentence] * args.n_sample)
                         for i in range(REPEAT_TIME_PER_QUESTION):
@@ -460,9 +468,11 @@ def main():
                         #         num_return_sequences=args.n_sample,
                         #     )
                         # CURRENT_REPEAT+=1
+                        print("Frequency prompt:", model.create_conv_prompt(sentence, system_message=False))
                         ground_truth_generation = model.generate(
                             model.create_conv_prompt(sentence,system_message=False), frequency_penalty=frequency, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
                         )
+                        print("Frequency response:", ground_truth_generation)
                         # outputs.extend(ground_truth_generation)
                         # prompts.extend([sentence] * args.n_sample)
                         for i in range(REPEAT_TIME_PER_QUESTION):
