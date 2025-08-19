@@ -108,25 +108,16 @@ def main():
         model_name = 'unknown'
         raise ValueError("Unknown model name, supports only vicuna, llama-2, gpt-3.5 and gpt-4")
     
-    WEIGHTS_PATH = model_path
-    TOKENIZER_PATH = WEIGHTS_PATH
-    
-    if "falcon" in args.model or "mpt" in args.model:
-        model = AutoModelForCausalLM.from_pretrained(
-            WEIGHTS_PATH,
-            torch_dtype=torch.bfloat16,
-            trust_remote_code=True,
-            low_cpu_mem_usage=True,
-            device_map="auto",
-        )
+    if "gemma" in model_path:
+        model = models.LocalVLLM(model_path=model_path, model_name=model_path)
     else:
         model = AutoModelForCausalLM.from_pretrained(
-            WEIGHTS_PATH,
+            model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
             device_map="auto",
         )
-    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 
     fname = args.model
@@ -262,7 +253,11 @@ def main():
                         # else:
                             # get ground truth generation
                         # CURRENT_REPEAT+= 1
-                        if not openAI_model:
+                        if "gemma" in model_path:
+                            ground_truth_generation = model.generate(
+                                model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                            )
+                        elif not openAI_model:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
                             )
@@ -319,7 +314,11 @@ def main():
                         #         num_return_sequences=args.n_sample,
                         #     )
                         # CURRENT_REPEAT+= 1 
-                        if not openAI_model:
+                        if "gemma" in model_path:
+                            ground_truth_generation = model.generate(
+                                model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                            )
+                        elif not openAI_model:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
                             )
@@ -372,19 +371,24 @@ def main():
                         #         num_return_sequences=args.n_sample,
                         #     )
                         # CURRENT_REPEAT+=1
-                        ground_truth_embeds = get_sentence_embedding(
-                            model, tokenizer, sentence
-                        )
-                        ground_truth_generation = model.generate(
-                            inputs_embeds=ground_truth_embeds,
-                            max_new_tokens=100,
-                            top_k=top_k,
-                            do_sample=True,
-                            num_return_sequences=REPEAT_TIME_PER_QUESTION,
-                        )
-                        ground_truth_generation = tokenizer.batch_decode(
-                            ground_truth_generation
-                        )
+                        if "gemma" in model_path:
+                            ground_truth_generation = model.generate(
+                                model.create_conv_prompt(sentence, system_message=False), top_k=top_k, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                            )
+                        else:
+                            ground_truth_embeds = get_sentence_embedding(
+                                model, tokenizer, sentence
+                            )
+                            ground_truth_generation = model.generate(
+                                inputs_embeds=ground_truth_embeds,
+                                max_new_tokens=100,
+                                top_k=top_k,
+                                do_sample=True,
+                                num_return_sequences=REPEAT_TIME_PER_QUESTION,
+                            )
+                            ground_truth_generation = tokenizer.batch_decode(
+                                ground_truth_generation
+                            )
                         # outputs.extend(ground_truth_generation)
                         # prompts.extend([sentence] * args.n_sample)
                         for i in range(REPEAT_TIME_PER_QUESTION):
