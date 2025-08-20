@@ -1,8 +1,8 @@
 [
     {
         "attack": "DeepInception",
-        "attack success rate": "0 / 60",
-        "efficiency": "0 / 180",
+        "attack success rate": "42 / 60",
+        "efficiency": "57 / 180",
         "model": "phi2"
     }
 ]
