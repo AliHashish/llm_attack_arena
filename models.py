@@ -395,25 +395,18 @@ class LocalVLLM(LLM):
         return result
 
     def generate_batch(self, prompts, temperature=1.0, max_tokens=150,top_p=1,top_k=-1, repetition_penalty=1.0,frequency_penalty=0.0,presence_penalty=0.0,n=1):
-        # prompt_inputs = []
-        # for prompt in prompts:
-        #     conv_temp = get_conversation_template(self.model_path)
-        #     self.set_system_message(conv_temp)
-
-        #     conv_temp.append_message(conv_temp.roles[0], prompt)
-        #     conv_temp.append_message(conv_temp.roles[1], None)
-
-        #     prompt_input = conv_temp.get_prompt()
-        #     prompt_inputs.append(prompt_input)
         prompts = truncate_prompts(self.tokenizer, prompts, MAX_LEN)
         sampling_params = SamplingParams(temperature=temperature, max_tokens=max_tokens,top_p=top_p,top_k=top_k,repetition_penalty=repetition_penalty,frequency_penalty=frequency_penalty,presence_penalty=presence_penalty,n=n)
         results = self.model.generate(prompts, sampling_params, use_tqdm=False)
         outputs = []
+        logging.info(f"generate_batch - prompts: {prompts}")
+        logging.info(f"generate_batch - results: {results}")
         for result in results:
             # prompt = result.prompt
             for output in result.outputs:  # Iterate over all outputs in each result
                 generated_text = output.text
                 outputs.append(generated_text)
+        logging.info(f"generate_batch - outputs: {outputs}")
         # print(outputs)
         return outputs
 
@@ -421,11 +414,15 @@ class LocalVLLM(LLM):
         conv_template = get_conversation_template(
             self.model_name
         )
+        logging.info(f"create_conv_prompt - prompt: {prompt}")
         # conv_template.set_system_message("You are a helpful agent")
         conv_template.append_message(conv_template.roles[0], prompt)
         conv_template.append_message(conv_template.roles[1], None)
-        
+        logging.info(f"create_conv_prompt - conv_template role 0: {conv_template.roles[0]}")
+        logging.info(f"create_conv_prompt - conv_template role 1: {conv_template.roles[1]}")
+
         full_prompt = conv_template.get_prompt()
+        logging.info(f"create_conv_prompt - full_prompt: {full_prompt}")
         return full_prompt
 
 

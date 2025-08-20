@@ -135,6 +135,7 @@ def main():
 
     train_data = pd.read_csv('../../Data/data.csv')
     lines = train_data['goal'].tolist()
+    logging.info(f"Number of lines: {len(lines)}")
 
     if args.tune_temp:
         for temp in np.arange(0.05, 1.05, 0.1):
@@ -147,31 +148,14 @@ def main():
 
             # logging.info(f"Length of lines: {len(lines)}")
             for sentence in tqdm(lines):
-                    logging.info(f"Temperature prompt: {model.create_conv_prompt(sentence)}")
                     try:
                         if "gemma" in model_path:
+                            prompt = model.create_conv_prompt(sentence)
+                            logging.info(f"Temperature prompt: {prompt}")
                             ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                                prompt, temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
                             logging.info(f"Temperature response: {ground_truth_generation}")
-                        elif not openAI_model:
-                            ground_truth_embeds = get_sentence_embedding(
-                                model, tokenizer, sentence
-                            )
-                            ground_truth_generation = model.generate(
-                                inputs_embeds=ground_truth_embeds,
-                                max_new_tokens=100,
-                                temperature=temp,
-                                do_sample=True,
-                                num_return_sequences=REPEAT_TIME_PER_QUESTION,
-                            )
-                            ground_truth_generation = tokenizer.batch_decode(
-                                ground_truth_generation
-                            )
-                        else:
-                            ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence,system_message=False), temperature=temp, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
-                            )
                         for i in range(REPEAT_TIME_PER_QUESTION):
                             final_results.append({"prompt":sentence,"question":sentence,"response":ground_truth_generation[i],"param":{'temperature':temp},"iteration":i+1})
 
