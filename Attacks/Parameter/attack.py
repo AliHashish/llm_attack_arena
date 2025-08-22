@@ -109,7 +109,7 @@ def main():
         raise ValueError("Unknown model name, supports only vicuna, llama-2, gpt-3.5 and gpt-4")
     
     if "gemma" in model_path:
-        model = models.LocalVLLM(model_path=model_path, model_name=model_path)
+        model = models.LocalVLLM(model_path=model_path, model_name=model_path, gpu_memory_utilization=0.5)
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
@@ -130,102 +130,12 @@ def main():
     if not os.path.exists(f"outputs/{fname}"):
         os.makedirs(f"outputs/{fname}")
 
-
-
-    # logging.info(f"Model size: {model.get_memory_footprint()/1e9}")
     logging.info(f"Model name: {fname}")
 
-    # if args.use_advbench:
-    #     with open("./data/advbench.txt") as f:
-    #         lines = f.readlines()[:100]
-    # else:
-    #     with open("./data/MaliciousInstruct.txt") as f:
-    #         lines = f.readlines()
 
     train_data = pd.read_csv('../../Data/data.csv')
     lines = train_data['goal'].tolist()
-    # prepend sys prompt
-    # lines = [prepend_sys_prompt(l, args) for l in lines]
-
-    # if args.use_greedy:
-    #     logging.info(f"Running greedy")
-    #     prompts = []
-    #     outputs = []
-    #     model.eval()
-
-    #     for sentence in tqdm(lines):
-    #         try:
-    #             if "falcon" in args.model or "mpt" in args.model:
-    #                 ground_truth_generation = model.generate(
-    #                     tokenizer(sentence, return_tensors="pt").input_ids.to("cuda"),
-    #                     max_new_tokens=100,
-    #                     do_sample=False,
-    #                     num_return_sequences=1,
-    #                 )
-    #             else:
-    #                 # get ground truth generation
-    #                 ground_truth_embeds = get_sentence_embedding(
-    #                     model, tokenizer, sentence
-    #                 )
-    #                 ground_truth_generation = model.generate(
-    #                     inputs_embeds=ground_truth_embeds,
-    #                     max_new_tokens=100,
-    #                     do_sample=False,
-    #                     num_return_sequences=1,
-    #                 )
-    #             ground_truth_generation = tokenizer.batch_decode(
-    #                 ground_truth_generation
-    #             )
-    #             outputs.extend(ground_truth_generation)
-    #             prompts.extend([sentence] * args.n_sample)
-    #         except:
-    #             continue
-    #         results = pd.DataFrame()
-    #         results["prompt"] = [line.strip() for line in prompts]
-    #         results["output"] = outputs
-            # results.to_csv(f"outputs/{fname}/output_greedy.csv")
-
-    # if args.use_default:
-    #     logging.info(f"Running default, top_p=0.9, temp=0.1")
-    #     prompts = []
-    #     outputs = []
-    #     model.eval()
-
-    #     for sentence in tqdm(lines):
-    #         try:
-    #             if "falcon" in args.model or "mpt" in args.model:
-    #                 ground_truth_generation = model.generate(
-    #                     tokenizer(sentence, return_tensors="pt").input_ids.to("cuda"),
-    #                     max_new_tokens=100,
-    #                     do_sample=True,
-    #                     top_p=0.9,
-    #                     temperature=0.1,
-    #                     num_return_sequences=1,
-    #                 )
-    #             else:
-    #                 # get ground truth generation
-    #                 ground_truth_embeds = get_sentence_embedding(
-    #                     model, tokenizer, sentence
-    #                 )
-    #                 ground_truth_generation = model.generate(
-    #                     inputs_embeds=ground_truth_embeds,
-    #                     max_new_tokens=100,
-    #                     do_sample=True,
-    #                     top_p=0.9,
-    #                     temperature=0.1,
-    #                     num_return_sequences=1,
-    #                 )
-    #             ground_truth_generation = tokenizer.batch_decode(
-    #                 ground_truth_generation
-    #             )
-    #             outputs.extend(ground_truth_generation)
-    #             prompts.extend([sentence] * args.n_sample)
-    #         except:
-    #             continue
-    #         results = pd.DataFrame()
-    #         results["prompt"] = [line.strip() for line in prompts]
-    #         results["output"] = outputs
-            # results.to_csv(f"outputs/{fname}/output_default.csv")
+    logging.info(f"Number of lines: {len(lines)}")
 
     if args.tune_temp:
         for temp in np.arange(0.05, 1.05, 0.1):
@@ -233,63 +143,25 @@ def main():
             logging.info(f"Running temp = {temp}")
             prompts = []
             outputs = []
-            if not openAI_model:
+            if not openAI_model and "gemma" not in model_path:
                 model.eval().to("cuda")
-            
+
+            # logging.info(f"Length of lines: {len(lines)}")
             for sentence in tqdm(lines):
-                # CURRENT_REPEAT = 0
-                # while CURRENT_REPEAT < REPEAT_TIME_PER_QUESTION:
                     try:
-                        # if "falcon" in args.model or "mpt" in args.model:
-                        #     ground_truth_generation = model.generate(
-                        #         tokenizer(sentence, return_tensors="pt").input_ids.to(
-                        #             "cuda"
-                        #         ),
-                        #         max_new_tokens=100,
-                        #         temperature=temp,
-                        #         do_sample=True,
-                        #         num_return_sequences=args.n_sample,
-                        #     )
-                        # else:
-                            # get ground truth generation
-                        # CURRENT_REPEAT+= 1
                         if "gemma" in model_path:
-                            print("Temperature prompt:", model.create_conv_prompt(sentence, system_message=False))
+                            prompt = model.create_conv_prompt(sentence)
+                            logging.info(f"Temperature prompt: {prompt}")
                             ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                                prompt, temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
-                            print("Temperature response:", ground_truth_generation)
-                        elif not openAI_model:
-                            ground_truth_embeds = get_sentence_embedding(
-                                model, tokenizer, sentence
-                            )
-                            ground_truth_generation = model.generate(
-                                inputs_embeds=ground_truth_embeds,
-                                max_new_tokens=100,
-                                temperature=temp,
-                                do_sample=True,
-                                num_return_sequences=REPEAT_TIME_PER_QUESTION,
-                            )
-                            ground_truth_generation = tokenizer.batch_decode(
-                                ground_truth_generation
-                            )
-                        else:
-                            ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence,system_message=False), temperature=temp, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
-                            )
+                            logging.info(f"Temperature response: {ground_truth_generation}")
                         for i in range(REPEAT_TIME_PER_QUESTION):
                             final_results.append({"prompt":sentence,"question":sentence,"response":ground_truth_generation[i],"param":{'temperature':temp},"iteration":i+1})
-                        
-                        # outputs.append(ground_truth_generation)
-                        # prompts.extend([sentence] * args.n_sample)
+
                         
                     except:
                         continue
-
-            # results = pd.DataFrame()
-            # results["prompt"] = [line.strip() for line in prompts]
-            # results["output"] = outputs
-            # results.to_csv(f"outputs/{fname}/output_temp_{temp}.csv")
 
     if args.tune_topp:
         for top_p in np.arange(0, 1.05, 0.1):
@@ -297,31 +169,18 @@ def main():
             logging.info(f"Running topp = {top_p}")
             outputs = []
             prompts = []
-            if not openAI_model:
+            if not openAI_model and "gemma" not in model_path:
                 model.eval().to("cuda")
 
             for sentence in tqdm(lines):
-                # CURRENT_REPEAT = 0
-                # while CURRENT_REPEAT < REPEAT_TIME_PER_QUESTION:
+                    logging.info(f"Top-p prompt: {model.create_conv_prompt(sentence)}")
                     try:
-                        # get ground truth generation
-                        # if "falcon" in args.model or "mpt" in args.model:
-                        #     ground_truth_generation = model.generate(
-                        #         tokenizer(sentence, return_tensors="pt").input_ids.to(
-                        #             "cuda"
-                        #         ),
-                        #         max_new_tokens=100,
-                        #         top_p=top_p,
-                        #         do_sample=True,
-                        #         num_return_sequences=args.n_sample,
-                        #     )
-                        # CURRENT_REPEAT+= 1 
                         if "gemma" in model_path:
                             print("Top-p prompt:", model.create_conv_prompt(sentence, system_message=False))
                             ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence, system_message=False), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                                model.create_conv_prompt(sentence), temperature=temp, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
-                            print("Temperature response:", ground_truth_generation)
+                            logging.info(f"Temperature response: {ground_truth_generation}")
                         elif not openAI_model:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
@@ -345,42 +204,23 @@ def main():
                         
                     except:
                         continue
-                     
-                # results = pd.DataFrame()
-                # results["prompt"] = [line.strip() for line in prompts]
-                # results["output"] = outputs
-                # results.to_csv(f"outputs/{fname}/output_topp_{top_p}.csv")
 
     if args.tune_topk:
         for top_k in [1, 2, 5, 10, 20, 50, 100, 200, 500]:
             logging.info(f"Running topk = {top_k}")
             outputs = []
             prompts = []
-            if not openAI_model:
+            if not openAI_model and "gemma" not in model_path:
                 model.eval().to("cuda")
 
             for sentence in tqdm(lines):
-                # CURRENT_REPEAT = 0
-                # while CURRENT_REPEAT < REPEAT_TIME_PER_QUESTION:
                     try:
-                        # get ground truth generation
-                        # if "falcon" in args.model or "mpt" in args.model:
-                        #     ground_truth_generation = model.generate(
-                        #         tokenizer(sentence, return_tensors="pt").input_ids.to(
-                        #             "cuda"
-                        #         ),
-                        #         max_new_tokens=100,
-                        #         top_k=top_k,
-                        #         do_sample=True,
-                        #         num_return_sequences=args.n_sample,
-                        #     )
-                        # CURRENT_REPEAT+=1
                         if "gemma" in model_path:
-                            print("Top-k prompt:", model.create_conv_prompt(sentence, system_message=False))
+                            logging.info(f"Top-k prompt: {model.create_conv_prompt(sentence)}")
                             ground_truth_generation = model.generate(
-                                model.create_conv_prompt(sentence, system_message=False), top_k=top_k, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
+                                model.create_conv_prompt(sentence), top_k=top_k, max_tokens=100, n=REPEAT_TIME_PER_QUESTION
                             )
-                            print("Top-k response:", ground_truth_generation)
+                            logging.info(f"Top-k response: {ground_truth_generation}")
                         else:
                             ground_truth_embeds = get_sentence_embedding(
                                 model, tokenizer, sentence
@@ -395,18 +235,11 @@ def main():
                             ground_truth_generation = tokenizer.batch_decode(
                                 ground_truth_generation
                             )
-                        # outputs.extend(ground_truth_generation)
-                        # prompts.extend([sentence] * args.n_sample)
                         for i in range(REPEAT_TIME_PER_QUESTION):
                             final_results.append({"prompt":sentence,"question":sentence,"response":ground_truth_generation[i],"param":{'top_k':top_k},"iteration":i+1})
                        
                     except:
                         continue
-                    
-                # results = pd.DataFrame()
-                # results["prompt"] = [line.strip() for line in prompts]
-                # results["output"] = outputs
-                # results.to_csv(f"outputs/{fname}/output_topk_{top_k}.csv")
 
     if args.tune_presence:
         for presence in np.arange(-2, 2.1, 0.5):
@@ -415,28 +248,12 @@ def main():
             if not openAI_model:
                 raise ValueError("Presence penalty is only tested for OpenAI models")
             for sentence in tqdm(lines):
-                # CURRENT_REPEAT = 0
-                # while CURRENT_REPEAT < REPEAT_TIME_PER_QUESTION:
                     try:
-                        # get ground truth generation
-                        # if "falcon" in args.model or "mpt" in args.model:
-                        #     ground_truth_generation = model.generate(
-                        #         tokenizer(sentence, return_tensors="pt").input_ids.to(
-                        #             "cuda"
-                        #         ),
-                        #         max_new_tokens=100,
-                        #         top_k=top_k,
-                        #         do_sample=True,
-                        #         num_return_sequences=args.n_sample,
-                        #     )
-                        # CURRENT_REPEAT+=1
-                        print("Presence prompt:", model.create_conv_prompt(sentence, system_message=False))
+                        logging.info(f"Presence prompt: {model.create_conv_prompt(sentence)}")
                         ground_truth_generation = model.generate(
                             model.create_conv_prompt(sentence,system_message=False), presence_penalty=presence, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
                         )
-                        print("Presence response:", ground_truth_generation)
-                        # outputs.extend(ground_truth_generation)
-                        # prompts.extend([sentence] * args.n_sample)
+                        logging.info(f"Presence response: {ground_truth_generation}")
                         for i in range(REPEAT_TIME_PER_QUESTION):
                             final_results.append({"prompt":sentence,"question":sentence,"response":ground_truth_generation[i],"param":{'presence':presence},"iteration":i+1})
  
@@ -453,41 +270,22 @@ def main():
             if not openAI_model:
                 raise ValueError("frequency penalty is only tested for OpenAI models")
             for sentence in tqdm(lines):
-                # CURRENT_REPEAT = 0
-                # while CURRENT_REPEAT < REPEAT_TIME_PER_QUESTION:
                     try:
-                        # get ground truth generation
-                        # if "falcon" in args.model or "mpt" in args.model:
-                        #     ground_truth_generation = model.generate(
-                        #         tokenizer(sentence, return_tensors="pt").input_ids.to(
-                        #             "cuda"
-                        #         ),
-                        #         max_new_tokens=100,
-                        #         top_k=top_k,
-                        #         do_sample=True,
-                        #         num_return_sequences=args.n_sample,
-                        #     )
-                        # CURRENT_REPEAT+=1
-                        print("Frequency prompt:", model.create_conv_prompt(sentence, system_message=False))
+                        logging.info(f"Frequency prompt: {model.create_conv_prompt(sentence)}")
                         ground_truth_generation = model.generate(
                             model.create_conv_prompt(sentence,system_message=False), frequency_penalty=frequency, max_tokens=100,n=REPEAT_TIME_PER_QUESTION
                         )
-                        print("Frequency response:", ground_truth_generation)
-                        # outputs.extend(ground_truth_generation)
-                        # prompts.extend([sentence] * args.n_sample)
+                        logging.info(f"Frequency response: {ground_truth_generation}")
                         for i in range(REPEAT_TIME_PER_QUESTION):
                             final_results.append({"prompt":sentence,"question":sentence,"response":ground_truth_generation[i],"param":{'frequency':frequency},"iteration":i+1})
                          
                     except:
                         continue
                     
-            #     break
-            # break
     model_name_path = model_name.replace("/","_")
-    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results"):
-            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results")
-    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/Parameter/Results/Parameters_{model_name_path}.json', 'w') as f:
+    if not os.path.exists(f"/home/hlahan59/masters/llm_attack_arena/Attacks/Parameter/Results"):
+            os.makedirs(f"/home/hlahan59/masters/llm_attack_arena/Attacks/Parameter/Results")
+    with open(f'/home/hlahan59/masters/llm_attack_arena/Attacks/Parameter/Results/Parameters_{model_name_path}.json', 'w') as f:
         json.dump(final_results, f, indent=4)
 if __name__ == "__main__":
     main()
-
