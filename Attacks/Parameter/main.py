@@ -61,10 +61,15 @@ def process_raw_jailbreak_prompts(model_name):
 
             print(f"Question {CURRENT_ITERATION}/60")
 
-            prompts.append(local_model.create_conv_prompt(prompt))
+            print(f"prompt: {prompt}")
+            conv_prompt = local_model.create_conv_prompt(prompt)
+            print(f"create_conv_prompt: {conv_prompt}")
+
+            prompts.append(conv_prompt)
             # print(f"prompt: {prompt}")
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, temperature=temperature)
             results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
+            print(f"Response List: {target_response_list}")
 
             final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
 
@@ -140,11 +145,14 @@ def process_raw_jailbreak_prompts(model_name):
             results[idx]['qA_pairs'] = []
 
             print(f"Question {CURRENT_ITERATION}/60")
-
-            prompts.append(local_model.create_conv_prompt(prompt))
+            print(f"prompt: {prompt}")
+            conv_prompt = local_model.create_conv_prompt(prompt)
+            print(f"create_conv_prompt: {conv_prompt}")
+            prompts.append(conv_prompt)
             # print(f"prompt: {prompt}")
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, frequency_penalty=frequency)
             results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
+            print(f"Response List: {target_response_list}")
 
             final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
 
@@ -166,12 +174,6 @@ if __name__ == "__main__":
         "--model",
         type=str,
         help="model name to be used for the attack",
-    )
-    parser.add_argument(
-        "--question_count",
-        type=int,
-        default=100,
-        help="how many questions you would like to test",
     )
     args = parser.parse_args()
     process_raw_jailbreak_prompts(args.model)
