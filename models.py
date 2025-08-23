@@ -400,7 +400,7 @@ class LocalVLLM(LLM):
         results = self.model.generate(prompts, sampling_params, use_tqdm=False)
         outputs = []
         logging.info(f"generate_batch - prompts: {prompts}")
-        logging.info(f"generate_batch - results: {results}")
+        # logging.info(f"generate_batch - results: {results}")
         for result in results:
             # prompt = result.prompt
             for output in result.outputs:  # Iterate over all outputs in each result
@@ -414,6 +414,7 @@ class LocalVLLM(LLM):
         conv_template = get_conversation_template(
             self.model_name
         )
+        conv_template.messages = [] 
         logging.info(f"create_conv_prompt - prompt: {prompt}")
         # conv_template.set_system_message("You are a helpful agent")
         conv_template.append_message(conv_template.roles[0], prompt)

@@ -362,11 +362,11 @@ class Parameters(BaseAttackModel):
         super().__init__()
         self.parameters = {
             'model':model,
-            'tune_temp':"true",
-            'tune_topk':"true",
-            'tune_topp':"true",
-            'tune_presence':"false",
-            'tune_frequency':"false",            
+            # 'tune_temp':"true",
+            # 'tune_topk':"true",
+            # 'tune_topp':"true",
+            # 'tune_presence':"false",
+            # 'tune_frequency':"false",            
         }
 
 

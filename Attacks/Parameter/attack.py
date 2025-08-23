@@ -53,8 +53,7 @@ def process_raw_jailbreak_prompts(model_name):
     top_ks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
     top_presences = np.arange(-2, 2.1, 0.5)
     top_frequencies = np.arange(-2, 2.1, 0.5)
-    total_questions = len(datas.values) * REPEAT_TIME_PER_QUESTION * \
-    (args.tune_temp + args.tune_topp + args.tune_topk + args.tune_presence + args.tune_frequency)
+    total_questions = len(datas.values) * REPEAT_TIME_PER_QUESTION * (len(temps) + len(top_ps) + len(top_ks) + len(top_presences) + len(top_frequencies))
     current_question = 0
 
     #Temperature
@@ -63,12 +62,12 @@ def process_raw_jailbreak_prompts(model_name):
         # CURRENT_ITERATION = 0
         print(f"Trying Temperature: {temperature}")
         for idx, question_list in enumerate(datas.values):
+            prompts = []
             print(f"Question list {question_list}")
             prompt = question_list[0]
             
             # CURRENT_ITERATION += 1
             current_question += REPEAT_TIME_PER_QUESTION
-            results[idx]['qA_pairs'] = []
 
             print(f"Question {current_question}/{total_questions}")
 
@@ -87,88 +86,89 @@ def process_raw_jailbreak_prompts(model_name):
                 final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'temperature':temperature},"iteration":i+1 })
             print(f"Final Results: {final_results[-1]}")
 
+
     #Top-p
     print("Starting Top-p Attack")
-    for top_p in np.arange(0, 1.05, 0.1):
-        CURRENT_ITERATION = 0
+    for top_p in top_ps:
         print(f"Trying Top-p: {top_p}")
         for idx, question_list in enumerate(datas.values):
+            prompts = []
             prompt = question_list[0]
 
-            CURRENT_ITERATION += 1
-            results[idx]['qA_pairs'] = []
+            current_question += REPEAT_TIME_PER_QUESTION
 
-            print(f"Question {CURRENT_ITERATION}/60")
+            print(f"Question {current_question}/{total_questions}")
 
             prompts.append(local_model.create_conv_prompt(prompt))
-            # print(f"prompt: {prompt}")
-            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, top_p=top_p)
-            results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
 
-            final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, top_p=top_p, n=REPEAT_TIME_PER_QUESTION)
+
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'top_p':top_p},"iteration":i+1 })
 
 
     #Top-k
     print("Starting Top-k Attack")
-    for top_k in [1, 2, 5, 10, 20, 50, 100, 200, 500]:
-        CURRENT_ITERATION = 0
+    for top_k in top_ks:
         print(f"Trying Top-k: {top_k}")
         for idx, question_list in enumerate(datas.values):
+            prompts = []
             prompt = question_list[0]
 
-            CURRENT_ITERATION += 1
-            results[idx]['qA_pairs'] = []
+            current_question += REPEAT_TIME_PER_QUESTION
 
-            print(f"Question {CURRENT_ITERATION}/60")
+            print(f"Question {current_question}/{total_questions}")
+
 
             prompts.append(local_model.create_conv_prompt(prompt))
-            # print(f"prompt: {prompt}")
-            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, top_k=top_k)
-            results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
+            
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, top_k=top_k, n=REPEAT_TIME_PER_QUESTION)
+            
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'top_k':top_k},"iteration":i+1 })
 
-            final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
+
 
     #Presence
     print("Starting Presence Attack")
-    for presence in np.arange(-2, 2.1, 0.5):
-        CURRENT_ITERATION = 0
+    for presence in top_presences:
         print(f"Trying Presence: {presence}")
         for idx, question_list in enumerate(datas.values):
+            prompts = []
             prompt = question_list[0]
 
-            CURRENT_ITERATION += 1
-            results[idx]['qA_pairs'] = []
+            current_question += REPEAT_TIME_PER_QUESTION
 
-            print(f"Question {CURRENT_ITERATION}/60")
+            print(f"Question {current_question}/{total_questions}")
+
 
             prompts.append(local_model.create_conv_prompt(prompt))
-            # print(f"prompt: {prompt}")
-            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, presence_penalty=presence)
-            results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
-
-            final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
+            
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, presence_penalty=presence, n=REPEAT_TIME_PER_QUESTION)
+            
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'presence':presence},"iteration":i+1 })
 
     #Frequency
-    for frequency in np.arange(-2, 2.1, 0.5):
-        CURRENT_ITERATION = 0
+    for frequency in top_frequencies:
         print(f"Trying Frequency: {frequency}")
         for idx, question_list in enumerate(datas.values):
+            prompts = []
             prompt = question_list[0]
 
-            CURRENT_ITERATION += 1
-            results[idx]['qA_pairs'] = []
+            current_question += REPEAT_TIME_PER_QUESTION
 
-            print(f"Question {CURRENT_ITERATION}/60")
-            print(f"prompt: {prompt}")
+            print(f"Question {current_question}/{total_questions}")
+
             conv_prompt = local_model.create_conv_prompt(prompt)
-            print(f"create_conv_prompt: {conv_prompt}")
+            
             prompts.append(conv_prompt)
-            # print(f"prompt: {prompt}")
-            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, frequency_penalty=frequency)
-            results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
-            print(f"Response List: {target_response_list}")
+            
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, frequency_penalty=frequency, n=REPEAT_TIME_PER_QUESTION)
+            
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'frequency':frequency},"iteration":i+1 })
 
-            final_results.append({'prompt': prompt, 'response': target_response_list[0], 'question': prompt,"template number":CURRENT_ITERATION })
 
 
 
