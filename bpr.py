@@ -64,7 +64,7 @@ if __name__ == "__main__":
                     # Store the result in the dictionary
                     results[attack][f"{developer}"] = {
                         "total": total,
-                        "banned": count,
+                        "passed": count,
                         "fraction": (count / total if total > 0 else 0) * 100
                     }
 
