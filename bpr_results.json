@@ -1,0 +1,105 @@
+{
+    "TemplateJailbreak": {
+        "deepseek-ai": {
+            "total": 13860,
+            "banned": 11588,
+            "fraction": 83.6075036075036
+        },
+        "google": {
+            "total": 13860,
+            "banned": 8151,
+            "fraction": 58.80952380952381
+        },
+        "meta": {
+            "total": 13860,
+            "banned": 13176,
+            "fraction": 95.06493506493506
+        },
+        "microsoft": {
+            "total": 13860,
+            "banned": 11192,
+            "fraction": 80.75036075036076
+        },
+        "Qwen": {
+            "total": 13860,
+            "banned": 12241,
+            "fraction": 88.31890331890332
+        }
+    },
+    "FFA": {
+        "deepseek-ai": {
+            "total": 180,
+            "banned": 150,
+            "fraction": 83.33333333333334
+        },
+        "google": {
+            "total": 180,
+            "banned": 0,
+            "fraction": 0.0
+        },
+        "meta": {
+            "total": 180,
+            "banned": 166,
+            "fraction": 92.22222222222223
+        },
+        "microsoft": {
+            "total": 60,
+            "banned": 34,
+            "fraction": 56.666666666666664
+        },
+        "Qwen": {
+            "total": 180,
+            "banned": 165,
+            "fraction": 91.66666666666666
+        }
+    },
+    "Parameter": {
+        "deepseek-ai": {
+            "total": 5400,
+            "banned": 5370,
+            "fraction": 99.44444444444444
+        },
+        "meta": {
+            "total": 5400,
+            "banned": 5383,
+            "fraction": 99.68518518518519
+        },
+        "microsoft": {
+            "total": 5400,
+            "banned": 5125,
+            "fraction": 94.9074074074074
+        },
+        "Qwen": {
+            "total": 5400,
+            "banned": 5322,
+            "fraction": 98.55555555555556
+        }
+    },
+    "DeepInception": {
+        "deepseek-ai": {
+            "total": 180,
+            "banned": 153,
+            "fraction": 85.0
+        },
+        "google": {
+            "total": 180,
+            "banned": 36,
+            "fraction": 20.0
+        },
+        "meta": {
+            "total": 180,
+            "banned": 169,
+            "fraction": 93.88888888888889
+        },
+        "microsoft": {
+            "total": 180,
+            "banned": 148,
+            "fraction": 82.22222222222221
+        },
+        "Qwen": {
+            "total": 180,
+            "banned": 180,
+            "fraction": 100.0
+        }
+    }
+}
