@@ -48,11 +48,20 @@ def process_raw_jailbreak_prompts(model_name):
     final_results = []
     prompts = []
 
-    temps = np.arange(0.05, 1.05, 0.1)
-    top_ps = np.arange(0, 1.05, 0.1)
+    temps = np.arange(0.05, 1.05, 0.2)
+    temps = [float(t) for t in temps]
+
+    top_ps = np.arange(0.05, 1.05, 0.2)
+    top_ps = [float(t) for t in top_ps]
+
     top_ks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
+
     top_presences = np.arange(-2, 2.1, 0.5)
+    top_presences = [float(t) for t in top_presences]
+
     top_frequencies = np.arange(-2, 2.1, 0.5)
+    top_frequencies = [float(t) for t in top_frequencies]
+
     total_questions = len(datas.values) * REPEAT_TIME_PER_QUESTION * (len(temps) + len(top_ps) + len(top_ks) + len(top_presences) + len(top_frequencies))
     current_question = 0
 
