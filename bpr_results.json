@@ -59,6 +59,11 @@
             "passed": 5370,
             "fraction": 99.44444444444444
         },
+        "google": {
+            "total": 2220,
+            "passed": 387,
+            "fraction": 17.43243243243243
+        },
         "meta": {
             "total": 5400,
             "passed": 5383,
