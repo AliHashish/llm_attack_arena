@@ -43,7 +43,7 @@ def process_raw_jailbreak_prompts(model_name):
         raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
     
 
-    local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
+    local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name, gpu_memory_utilization=0.6)
         
     final_results = []
     prompts = []
@@ -51,18 +51,18 @@ def process_raw_jailbreak_prompts(model_name):
     temps = np.arange(0.05, 1.05, 0.1)
     temps = [round(float(t), 2) for t in temps]
 
-    top_ps = np.arange(0, 1.05, 0.1)
+    top_ps = np.arange(0.05, 1.05, 0.1)
     top_ps = [round(float(t), 2) for t in top_ps]
 
     top_ks = [1, 2, 5, 10, 20, 50, 100, 200, 500]
 
-    # top_presences = np.arange(-2, 2.1, 0.5)
-    # top_presences = [float(t) for t in top_presences]
+    top_presences = np.arange(-2, 2.1, 0.5)
+    top_presences = [float(t) for t in top_presences]
 
-    # top_frequencies = np.arange(-2, 2.1, 0.5)
-    # top_frequencies = [float(t) for t in top_frequencies]
+    top_frequencies = np.arange(-2, 2.1, 0.5)
+    top_frequencies = [float(t) for t in top_frequencies]
 
-    total_questions = len(datas.values) * REPEAT_TIME_PER_QUESTION * (len(temps) + len(top_ps) + len(top_ks))# + len(top_presences) + len(top_frequencies))
+    total_questions = len(datas.values) * REPEAT_TIME_PER_QUESTION * (len(temps) + len(top_ps) + len(top_ks) + len(top_presences) + len(top_frequencies))
     current_question = 0
 
     #Temperature
@@ -138,45 +138,46 @@ def process_raw_jailbreak_prompts(model_name):
 
 
 
-    # #Presence
-    # print("Starting Presence Attack")
-    # for presence in top_presences:
-    #     print(f"Trying Presence: {presence}")
-    #     for idx, question_list in enumerate(datas.values):
-    #         prompts = []
-    #         prompt = question_list[0]
+    #Presence
+    print("Starting Presence Attack")
+    for presence in top_presences:
+        print(f"Trying Presence: {presence}")
+        for idx, question_list in enumerate(datas.values):
+            prompts = []
+            prompt = question_list[0]
 
-    #         current_question += REPEAT_TIME_PER_QUESTION
+            current_question += REPEAT_TIME_PER_QUESTION
 
-    #         print(f"Question {current_question}/{total_questions}")
+            print(f"Question {current_question}/{total_questions}")
 
 
-    #         prompts.append(local_model.create_conv_prompt(prompt))
+            prompts.append(local_model.create_conv_prompt(prompt))
             
-    #         target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, presence_penalty=presence, n=REPEAT_TIME_PER_QUESTION)
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, presence_penalty=presence, n=REPEAT_TIME_PER_QUESTION)
             
-    #         for i in range(REPEAT_TIME_PER_QUESTION):
-    #             final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'presence':presence},"iteration":i+1 })
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'presence':presence},"iteration":i+1 })
 
-    # #Frequency
-    # for frequency in top_frequencies:
-    #     print(f"Trying Frequency: {frequency}")
-    #     for idx, question_list in enumerate(datas.values):
-    #         prompts = []
-    #         prompt = question_list[0]
+    #Frequency
+    print("Starting Frequency Attack")
+    for frequency in top_frequencies:
+        print(f"Trying Frequency: {frequency}")
+        for idx, question_list in enumerate(datas.values):
+            prompts = []
+            prompt = question_list[0]
 
-    #         current_question += REPEAT_TIME_PER_QUESTION
+            current_question += REPEAT_TIME_PER_QUESTION
 
-    #         print(f"Question {current_question}/{total_questions}")
+            print(f"Question {current_question}/{total_questions}")
 
-    #         conv_prompt = local_model.create_conv_prompt(prompt)
+            conv_prompt = local_model.create_conv_prompt(prompt)
             
-    #         prompts.append(conv_prompt)
+            prompts.append(conv_prompt)
             
-    #         target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, frequency_penalty=frequency, n=REPEAT_TIME_PER_QUESTION)
+            target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, frequency_penalty=frequency, n=REPEAT_TIME_PER_QUESTION)
             
-    #         for i in range(REPEAT_TIME_PER_QUESTION):
-    #             final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'frequency':frequency},"iteration":i+1 })
+            for i in range(REPEAT_TIME_PER_QUESTION):
+                final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'frequency':frequency},"iteration":i+1 })
 
 
 
