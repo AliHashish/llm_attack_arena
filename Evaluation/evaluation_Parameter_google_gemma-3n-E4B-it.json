@@ -1,8 +1,8 @@
 [
     {
         "attack": "Parameters",
-        "attack success rate": "3 / 60",
-        "efficiency": "20 / 8460",
+        "attack success rate": "2 / 60",
+        "efficiency": "8 / 5400",
         "model": "gemma"
     }
 ]
