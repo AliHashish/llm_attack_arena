@@ -43,9 +43,9 @@
             "fraction": 92.22222222222223
         },
         "microsoft": {
-            "total": 60,
-            "passed": 34,
-            "fraction": 56.666666666666664
+            "total": 180,
+            "passed": 120,
+            "fraction": 66.66666666666666
         },
         "Qwen": {
             "total": 180,
