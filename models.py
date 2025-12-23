@@ -1,6 +1,5 @@
 from transformers import AutoTokenizer
 from fastchat.model import get_conversation_template
-import logging
 from vllm import LLM as VLLM
 from vllm import SamplingParams
 
