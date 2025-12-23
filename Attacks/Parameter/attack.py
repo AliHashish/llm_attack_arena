@@ -1,10 +1,5 @@
 import pandas as pd
-
 import json
-
-import re
-import json
-from collections import defaultdict
 import argparse
 import sys
 import os
@@ -17,14 +12,11 @@ import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list, get_model_path
-
-
 from global_config import get_config  
+
 config = get_config()
-# MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 
-final_res = []
     
 def process_raw_jailbreak_prompts(model_name):
     f = open(f'../../Data/data.csv')
@@ -197,7 +189,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        help="model name to be used for the attack",
+        help="model name to be used for the attack"
     )
     args = parser.parse_args()
     process_raw_jailbreak_prompts(args.model)

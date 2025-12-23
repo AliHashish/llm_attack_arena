@@ -1,10 +1,5 @@
 import pandas as pd
-
 import json
-
-import re
-import json
-from collections import defaultdict
 import argparse
 import sys
 import os
@@ -16,17 +11,10 @@ import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list, get_model_path
-
-
 from global_config import get_config  
+
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
-final_res = []
-
-def replace_names(text):
-    text = re.sub(r'(?i)ChatGPT', 'Llama2', text)
-    text = re.sub(r'(?i)OpenAI', 'Meta', text)
-    return text
     
 def process_raw_jailbreak_prompts(model_name,question_count):
     # file_path = '../../Data/data.csv'
@@ -40,7 +28,6 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
         model_path = get_model_path(model_name)
-        directory_name = args.model
 
         print(f"\n\n\nmodelPath: {model_path}\n\n\n")
         model_name_absolute = "/".join(model_path.split("/")[-2:])
