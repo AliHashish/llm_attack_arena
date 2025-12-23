@@ -46,12 +46,6 @@ python main.py --model qwen --type Parameters
 
 Available attack types: `DeepInception`, `Jailbroken`, `TemplateJailbreak`, `Parameters`, `FFA`
 
-### Docker
-
-```powershell
-.\run_container.ps1
-```
-
 ## Structure
 
 ```
