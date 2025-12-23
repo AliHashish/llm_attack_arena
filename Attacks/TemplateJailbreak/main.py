@@ -4,19 +4,11 @@ import json
 
 import re
 import json
-from collections import defaultdict
 import argparse
 import sys
 import os
 parent_parent_dir = os.path.abspath(os.path.join(os.getcwd(), '../../'))
 sys.path.append(parent_parent_dir)
-# # Set the path to the 'papers' directory
-# papers_path = '/workspace/papers'
-
-# # Add the 'papers' directory to sys.path
-# sys.path.append(papers_path)
-
-# Now you can import the 'models' module
 import models
 import torch
 import gc
@@ -24,17 +16,11 @@ import gc
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list, get_model_path
 
-# import sys
-
-# original_sys_path = sys.path.copy()
-# project_root_path = os.path.join(os.path.dirname(__file__), '../../')
-# sys.path.append(project_root_path)
 from global_config import get_config  
 config = get_config()
 # MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
-#a reset function to reset the sys.path
-# sys.path = original_sys_path
+
 final_res = []
     
 def run(model_name):
@@ -53,12 +39,8 @@ def run(model_name):
     
     local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
 
-    # df = pd.read_csv(file_path)
-    # df = df.sample(frac=1).reset_index(drop=True)
     df1 = pd.read_excel(jailbreak_path)
     prompts_templates = df1['text']
-    # Looping through each row
-    # n = 0
     train_data = pd.read_csv(file_path)
     questions = train_data['goal'].tolist()
         
@@ -79,7 +61,6 @@ def run(model_name):
 
         i = 0
         for prompt,template,response in zip(original_prompts,templates,responses):
-        # response = response[0].outputs[0].text
             i = i%REPEAT_TIME_PER_QUESTION + 1
             if i == 0:
                 i = REPEAT_TIME_PER_QUESTION
