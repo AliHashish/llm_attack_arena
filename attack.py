@@ -26,13 +26,8 @@ class DeepInception(BaseAttackModel):
     def __init__(self,model):
         super().__init__()
         self.parameters = {
-            'target-model': model,
-            'target-max-n-tokens': 128,
-            'exp_name':"main",
-            'defense': 'none'
+            'model': model,
         }
-
-
 
     def run(self):
         print("Running main.py with specified parameters for DeepInception")
@@ -42,25 +37,20 @@ class DeepInception(BaseAttackModel):
 
         cmd = ['stdbuf', '-oL', command, '-u', script] + args
 
-        # Start the subprocess and capture its output
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/DeepInception", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-
         finally:
             sp.terminate()
             sp.wait()
 
 class TemplateJailbreak(BaseAttackModel):
     def __init__(self,model):
-        # Set up default parameters
         super().__init__()
         self.parameters = {
             'model':model,
-            'question_count':100,
         }
-
 
     def run(self):
         print("Running main.py with specified parameters for TemplateJailbreak")
@@ -70,24 +60,20 @@ class TemplateJailbreak(BaseAttackModel):
 
         cmd = ['stdbuf', '-oL', command, '-u', script] + args
 
-        # Start the subprocess and capture its output
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/TemplateJailbreak/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-
         finally:
             sp.terminate()
             sp.wait()
 
 class Parameters(BaseAttackModel):
     def __init__(self,model):
-        # Set up default parameters
         super().__init__()
         self.parameters = {
             'model':model,          
         }
-
 
     def run(self):
         print("Running main.py with specified parameters for Parameters")
@@ -97,19 +83,16 @@ class Parameters(BaseAttackModel):
 
         cmd = ['stdbuf', '-oL', command, '-u', script] + args
 
-        # Start the subprocess and capture its output
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/Parameter/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-
         finally:
             sp.terminate()
             sp.wait()
 
 class FFA(BaseAttackModel):
     def __init__(self, model):
-        # Set up default parameters
         super().__init__()
         self.parameters = {
             'model': model,
@@ -123,12 +106,10 @@ class FFA(BaseAttackModel):
 
         cmd = ['stdbuf', '-oL', command, '-u', script] + args
 
-        # Start the subprocess and capture its output
         try:
             with subprocess.Popen(cmd, cwd="./Attacks/FFA/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-
         finally:
             sp.terminate()
             sp.wait()

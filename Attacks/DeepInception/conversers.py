@@ -3,12 +3,14 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import common
-from config import (TARGET_TEMP, TARGET_TOP_P)
 from language_models import HuggingFace
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 import models
 from utils import get_model_path_and_template
+
+TARGET_TEMP = 0
+TARGET_TOP_P = 1
 
 def load_attack_and_target_models(args):
     targetLM = TargetLM(model_name = args.target_model, 

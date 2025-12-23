@@ -66,11 +66,3 @@ class HuggingFace(LanguageModel):
         torch.cuda.empty_cache()
 
         return outputs_list
-
-    def extend_eos_tokens(self):        
-        # Add closing braces for Vicuna/Llama eos when using attacker model
-        self.eos_token_ids.extend([
-            self.tokenizer.encode("}")[1],
-            29913, 
-            9092,
-            16675])

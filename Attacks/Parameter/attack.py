@@ -18,7 +18,7 @@ config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 
     
-def process_raw_jailbreak_prompts(model_name):
+def run(model_name):
     f = open(f'../../Data/data.csv')
     datas = pd.read_csv(f, usecols=['goal'])
     f.close()
@@ -191,4 +191,4 @@ if __name__ == "__main__":
         help="model name to be used for the attack"
     )
     args = parser.parse_args()
-    process_raw_jailbreak_prompts(args.model)
+    run(args.model)

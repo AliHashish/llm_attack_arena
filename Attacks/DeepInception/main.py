@@ -17,34 +17,16 @@ REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 #a reset function to reset the sys.path
 sys.path = original_sys_path
 
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-
-    ########### Target model parameters ##########
-    parser.add_argument(
-        "--target-model",
-        choices= model_names_list.keys(),
-        help = "Name of target model.",
-    )
-    parser.add_argument(
-        "--target-max-n-tokens",
-        type = int,
-        default = 1024,
-        help = "Maximum number of generated tokens for the target."
-    )
-
-    ##################################################
-    args = parser.parse_args()
+def run(model_name):
+    
 
     final_results = []
     if args.target_model in model_names_list.keys():
         model_name = model_names_list[args.target_model]
-        directory_name = args.target_model
     else:
         raise ValueError(f"Unknown model name, supports only {model_names_list.keys()}")
     
-    f = open(f'./res/data_main.json',) 
+    f = open(f'./../../Data/data_main.json',) 
     datas = json.load(f) 
     f.close() 
     results = [{} for _ in range(len(datas))]
@@ -72,3 +54,17 @@ if __name__ == '__main__':
             os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
     with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
          json.dump(final_results, f, indent=4)
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+
+    ########### Target model parameters ##########
+    parser.add_argument(
+        "--model",
+        choices= model_names_list.keys(),
+        help = "model name to be used for the attack.",
+    )
+    args = parser.parse_args()
+
+    run(args.model)

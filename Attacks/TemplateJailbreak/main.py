@@ -16,11 +16,8 @@ from global_config import get_config
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
     
-def process_raw_jailbreak_prompts(model_name,question_count):
-    # file_path = '../../Data/data.csv'
-    # jailbreak_path = './jailbreak-prompt.xlsx'
-    openAI_model = False
-    f = open(f'../DeepInception/res/data_main.json',) 
+def run(model_name):
+    f = open(f'../../Data/data_main.json',) 
     datas = json.load(f) 
     f.close() 
     results = [{} for _ in range(len(datas))]
@@ -34,16 +31,9 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     else:
         model_name = 'unknown'
         raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
-    
-    if openAI_model:
-        local_model = models.OpenAILLM(model_path)
-    else:
-        local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
 
-    # df1 = pd.read_excel(jailbreak_path)
-    # prompts_templates = df1['text']
-    # train_data = pd.read_csv(file_path)
-    # questions = train_data['goal'].tolist()
+    local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
+
         
     final_results = []
     prompts = []
@@ -90,11 +80,5 @@ if __name__ == "__main__":
         type=str,
         help="model name to be used for the attack",
     )
-    parser.add_argument(
-        "--question_count",
-        type=int,
-        default=100,
-        help="how many questions you would like to test",
-    )
     args = parser.parse_args()
-    process_raw_jailbreak_prompts(args.model,args.question_count)
+    run(args.model)
