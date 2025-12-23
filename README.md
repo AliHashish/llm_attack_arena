@@ -6,13 +6,6 @@ A framework for testing jailbreak attacks on large language models.
 
 This project implements and evaluates multiple jailbreak attack methods against various LLMs to assess their robustness and safety alignment.
 
-## Attack Methods
-
-- **DeepInception**: Nested scenario-based jailbreaking
-- **FFA**: Few-shot attack prompting
-- **Parameter**: Parameter manipulation attacks
-- **TemplateJailbreak**: Template-based prompt injection
-
 ## Tested Models
 
 | Model Key | Model Path |
@@ -22,6 +15,13 @@ This project implements and evaluates multiple jailbreak attack methods against 
 | `deepseek` | deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B |
 | `qwen` | Qwen/Qwen3-0.6B |
 | `gemma` | google/gemma-3n-E4B-it |
+
+## Attack Methods
+
+- **DeepInception**: Nested scenario-based jailbreaking
+- **FFA**: Few-shot attack prompting
+- **Parameter**: Parameter manipulation attacks
+- **TemplateJailbreak**: Template-based prompt injection
 
 ## Usage
 
