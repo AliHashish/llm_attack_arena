@@ -1,10 +1,5 @@
 import pandas as pd
-
 import json
-
-import re
-import json
-from collections import defaultdict
 import argparse
 import sys
 import os
@@ -17,16 +12,13 @@ import gc
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list, get_model_path
 from FFA_templates import FFA_templates
-
-
 from global_config import get_config  
+
 config = get_config()
-# MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 
-final_res = []
     
-def process_raw_jailbreak_prompts(model_name,question_count):
+def process_raw_jailbreak_prompts(model_name):
     f = open(f'../../Data/data.csv')
     datas = pd.read_csv(f, usecols=['goal'])
     f.close()
@@ -35,7 +27,6 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
         model_path = get_model_path(model_name)
-        directory_name = args.model
 
         print(f"\n\n\nmodelPath: {model_path}\n\n\n")
         model_name_absolute = "/".join(model_path.split("/")[-2:])
@@ -59,12 +50,10 @@ def process_raw_jailbreak_prompts(model_name,question_count):
 
             prompt = template.replace("ඞ", question)
             prompts.append(local_model.create_conv_prompt(prompt))
-            # print(f"prompt: {prompt}")
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500)
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
-            # print(f"final_results[-1]: {final_results[-1]}")
 
         
     
@@ -85,11 +74,6 @@ if __name__ == "__main__":
         type=str,
         help="model name to be used for the attack",
     )
-    parser.add_argument(
-        "--question_count",
-        type=int,
-        default=100,
-        help="how many questions you would like to test",
-    )
+
     args = parser.parse_args()
-    process_raw_jailbreak_prompts(args.model,args.question_count)
+    process_raw_jailbreak_prompts(args.model)
