@@ -56,13 +56,10 @@ def run(model_name):
     current_question = 0
 
     #Temperature
-    print("Starting Temperature Attack")
     for temperature in temps:
         # CURRENT_ITERATION = 0
-        print(f"Trying Temperature: {temperature}")
         for idx, question_list in enumerate(datas.values):
             prompts = []
-            print(f"Question list {question_list}")
             prompt = question_list[0]
             
             # CURRENT_ITERATION += 1
@@ -70,26 +67,17 @@ def run(model_name):
 
             print(f"Question {current_question}/{total_questions}")
 
-            print(f"prompt: {prompt}")
             conv_prompt = local_model.create_conv_prompt(prompt)
-            print(f"create_conv_prompt: {conv_prompt}")
 
             prompts.append(conv_prompt)
-            print(f"\n\nana el prompts: {prompts}")
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500, temperature=temperature, n=REPEAT_TIME_PER_QUESTION)
-            print(f"length Response List: {len(target_response_list)}")
-            # results[idx]['qA_pairs'].append({'Q': prompt, 'A': target_response_list})
-            print(f"Response List: {target_response_list}")
 
             for i in range(REPEAT_TIME_PER_QUESTION):
                 final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'temperature':temperature},"iteration":i+1 })
-            print(f"Final Results: {final_results[-1]}")
 
 
     #Top-p
-    print("Starting Top-p Attack")
     for top_p in top_ps:
-        print(f"Trying Top-p: {top_p}")
         for idx, question_list in enumerate(datas.values):
             prompts = []
             prompt = question_list[0]
@@ -107,9 +95,7 @@ def run(model_name):
 
 
     #Top-k
-    print("Starting Top-k Attack")
     for top_k in top_ks:
-        print(f"Trying Top-k: {top_k}")
         for idx, question_list in enumerate(datas.values):
             prompts = []
             prompt = question_list[0]
@@ -129,9 +115,7 @@ def run(model_name):
 
 
     #Presence
-    print("Starting Presence Attack")
     for presence in top_presences:
-        print(f"Trying Presence: {presence}")
         for idx, question_list in enumerate(datas.values):
             prompts = []
             prompt = question_list[0]
@@ -149,9 +133,7 @@ def run(model_name):
                 final_results.append({'prompt': prompt, 'response': target_response_list[i], 'question': prompt,"param":{'presence':presence},"iteration":i+1 })
 
     #Frequency
-    print("Starting Frequency Attack")
     for frequency in top_frequencies:
-        print(f"Trying Frequency: {frequency}")
         for idx, question_list in enumerate(datas.values):
             prompts = []
             prompt = question_list[0]
