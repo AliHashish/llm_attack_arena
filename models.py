@@ -55,7 +55,7 @@ class LocalVLLM(LLM):
             self.model = VLLM(model=model_name, gpu_memory_utilization=gpu_memory_utilization)
         
         if system_message is None and 'llama' in model_path:
-            # monkey patch for latest FastChat to use llama2's official system message
+            # monkey patch for latest FastChat to use llama's official system message
             self.system_message = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. " \
             "Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. " \
             "Please ensure that your responses are socially unbiased and positive in nature.\n\n" \
@@ -81,15 +81,10 @@ class LocalVLLM(LLM):
         sampling_params = SamplingParams(temperature=temperature, max_tokens=max_tokens,top_p=top_p,top_k=top_k,repetition_penalty=repetition_penalty,frequency_penalty=frequency_penalty,presence_penalty=presence_penalty,n=n)
         results = self.model.generate(prompts, sampling_params, use_tqdm=False)
         outputs = []
-        logging.info(f"generate_batch - prompts: {prompts}")
-        # logging.info(f"generate_batch - results: {results}")
         for result in results:
-            # prompt = result.prompt
             for output in result.outputs:  # Iterate over all outputs in each result
                 generated_text = output.text
                 outputs.append(generated_text)
-        logging.info(f"generate_batch - outputs: {outputs}")
-        # print(outputs)
         return outputs
 
     def create_conv_prompt(self,prompt):
@@ -97,13 +92,8 @@ class LocalVLLM(LLM):
             self.model_name
         )
         conv_template.messages = [] 
-        logging.info(f"create_conv_prompt - prompt: {prompt}")
-        # conv_template.set_system_message("You are a helpful agent")
         conv_template.append_message(conv_template.roles[0], prompt)
         conv_template.append_message(conv_template.roles[1], None)
-        logging.info(f"create_conv_prompt - conv_template role 0: {conv_template.roles[0]}")
-        logging.info(f"create_conv_prompt - conv_template role 1: {conv_template.roles[1]}")
 
         full_prompt = conv_template.get_prompt()
-        logging.info(f"create_conv_prompt - full_prompt: {full_prompt}")
         return full_prompt
