@@ -53,7 +53,8 @@ Available attack types: `DeepInception`, `Jailbroken`, `TemplateJailbreak`, `Par
 ├── Data/             # Test datasets
 ├── Evaluation/       # Evaluation results
 ├── main.py           # Main entry point
-├── models.py         # Model implementations
+├── models.py         # Model implementations using vLLM
+├── requirements.txt  # Required packages
 └── utils.py          # Utility functions
 ```
 
