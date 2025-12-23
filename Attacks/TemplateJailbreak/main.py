@@ -1,26 +1,45 @@
 import pandas as pd
+
 import json
+
+import re
+import json
+from collections import defaultdict
 import argparse
 import sys
 import os
 parent_parent_dir = os.path.abspath(os.path.join(os.getcwd(), '../../'))
 sys.path.append(parent_parent_dir)
+# # Set the path to the 'papers' directory
+# papers_path = '/workspace/papers'
+
+# # Add the 'papers' directory to sys.path
+# sys.path.append(papers_path)
+
+# Now you can import the 'models' module
 import models
 import torch
 import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import model_names_list, get_model_path
-from global_config import get_config  
 
+# import sys
+
+# original_sys_path = sys.path.copy()
+# project_root_path = os.path.join(os.path.dirname(__file__), '../../')
+# sys.path.append(project_root_path)
+from global_config import get_config  
 config = get_config()
+# MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
+#a reset function to reset the sys.path
+# sys.path = original_sys_path
+final_res = []
     
 def run(model_name):
-    f = open(f'../../Data/data_main.json',) 
-    datas = json.load(f) 
-    f.close() 
-    results = [{} for _ in range(len(datas))]
+    file_path = '../../Data/data.csv'
+    jailbreak_path = './jailbreak-prompt.xlsx'
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
@@ -31,44 +50,48 @@ def run(model_name):
     else:
         model_name = 'unknown'
         raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
-
+    
     local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
 
+    # df = pd.read_csv(file_path)
+    # df = df.sample(frac=1).reset_index(drop=True)
+    df1 = pd.read_excel(jailbreak_path)
+    prompts_templates = df1['text']
+    # Looping through each row
+    # n = 0
+    train_data = pd.read_csv(file_path)
+    questions = train_data['goal'].tolist()
         
-    final_results = []
-    prompts = []
-    for idx, data in enumerate(datas):
-        question_bkp = data['questions']
-        questions = data['questions']
-        CURRENT_ITERATION = 0
-        while CURRENT_ITERATION < REPEAT_TIME_PER_QUESTION:
-            results[idx]['topic'] = data['topic']
-            results[idx]['qA_pairs'] = []
-            for i, question in enumerate(questions):
-                print(f"Question {(idx * len(questions) * REPEAT_TIME_PER_QUESTION + i + 1) + CURRENT_ITERATION * len(questions)} / {len(questions) * REPEAT_TIME_PER_QUESTION * len(datas)}")
-                
-                prompt = data['inception_attack'].replace("ඞ", question)
-                prompts.append(local_model.create_conv_prompt(prompt))
-                # print(f"prompt: {prompt}")
-                # print(f"prompts: {prompts}")
-                target_response_list = local_model.generate_batch(prompts, max_tokens = 2048)
-                # target_response_list = targetLM.get_response(data['inception_attack'].replace("ඞ", question), args.defense)
-                results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
-                # print(f"results[idx]['qA_pairs'][-1]: {results[idx]['qA_pairs'][-1]}")
-                # if i == 0:
-                #     continue
-                # final_results.append({'prompt': data['inception_attack'], 'response': target_response_list[0], 'question': question_bkp[i-1],"iteration":CURRENT_ITERATION })
-                final_results.append({'prompt': data['inception_attack'], 'response': target_response_list[0], 'question': question_bkp[i],"iteration":CURRENT_ITERATION })
-                # print(f"final_results[-1]: {final_results[-1]}")
-            CURRENT_ITERATION+= 1
         
-    
-    model_name_path = model_name.replace("/","_")
+    for question in questions:
+        print(f"running {question}")
+        prompts = []
+        templates= []
+        original_prompts = []
+
+        for template in prompts_templates:
+            prompt = template.replace('[INSERT PROMPT HERE]', question)
+            original_prompts.extend([prompt]*REPEAT_TIME_PER_QUESTION)
+            prompts.append(local_model.create_conv_prompt(prompt))
+            templates.extend([template]*REPEAT_TIME_PER_QUESTION)
+
+        responses = local_model.generate_batch(prompts,n=REPEAT_TIME_PER_QUESTION,temperature=1)
+
+        i = 0
+        for prompt,template,response in zip(original_prompts,templates,responses):
+        # response = response[0].outputs[0].text
+            i = i%REPEAT_TIME_PER_QUESTION + 1
+            if i == 0:
+                i = REPEAT_TIME_PER_QUESTION
+            final_res.append({"template":template,"question":question,"prompt":prompt,"response":response,"iteration":i})
+            
+
+    model_name_path = model_name.replace("/", "_")
     if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results"):
-            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results")
+        os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results")
     with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_{model_name_path}.json', 'w') as f:
-         json.dump(final_results, f, indent=4)
-    
+        json.dump(final_res, f, indent=4)
+
     del local_model
     gc.collect()
     torch.cuda.empty_cache()
