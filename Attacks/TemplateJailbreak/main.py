@@ -64,9 +64,9 @@ def run(model_name):
         
     
     model_name_path = model_name.replace("/","_")
-    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results"):
-            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
-    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
+    if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results"):
+            os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results")
+    with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/TemplateJailbreak/Results/TemplateJailbreak_{model_name_path}.json', 'w') as f:
          json.dump(final_results, f, indent=4)
     
     del local_model
