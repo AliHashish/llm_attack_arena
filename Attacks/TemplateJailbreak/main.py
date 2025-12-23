@@ -14,9 +14,8 @@ import torch
 import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils import model_names_list, get_model_path
+from utils import model_names_list, get_model_path, get_config
 
-from global_config import get_config  
 config = get_config()
 # MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION

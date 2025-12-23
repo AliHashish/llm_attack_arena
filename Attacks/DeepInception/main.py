@@ -10,9 +10,8 @@ import torch
 import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils import model_names_list, get_model_path
-from deepinception_templates import inception_templates
-from global_config import get_config  
+from utils import model_names_list, get_model_path, get_config
+from deepinception_templates import inception_templates 
 
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION

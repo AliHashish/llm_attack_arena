@@ -10,9 +10,8 @@ import torch
 import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils import model_names_list, get_model_path
-from FFA_templates import FFA_templates
-from global_config import get_config  
+from utils import model_names_list, get_model_path, get_config
+from FFA_templates import FFA_templates  
 
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION

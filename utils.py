@@ -1,22 +1,17 @@
 import os
-# from huggingface_hub import login as huglogin
-#huglogin("Add_Your_Token_Here")
+from ml_collections import config_dict
+from huggingface_hub import login as huglogin
 
-model_names_list = {
-    'phi2':"microsoft/phi-2",
-    'llama':"meta-llama/Llama-3.2-1B",
-    'deepseek': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
-    'qwen': 'Qwen/Qwen3-0.6B',
-    'gemma' : 'google/gemma-3n-E4B-it'
-}
+huglogin(token=os.getenv("HUGGINGFACEHUB_API_TOKEN"))
 
-developers = {
-    'phi2':"microsoft",
-    'llama':"meta",
-    'deepseek': 'deepseek-ai',
-    'qwen': 'Qwen',
-    'gemma': 'google',
-}
+def get_config():
+    config = config_dict.ConfigDict()
+
+    # Define your configurations
+    config.MAX_ALLOWED_ITERATION_PER_QUESTION = 75
+    config.REPEAT_TIME_PER_QUESTION = 3
+
+    return config
 
 def get_model_path(model_name):
     return os.path.join(os.path.dirname(__file__), 'models', model_name)
@@ -92,3 +87,19 @@ attacks_list = [
     "Parameter",
     "DeepInception"
 ]
+
+model_names_list = {
+    'phi2':"microsoft/phi-2",
+    'llama':"meta-llama/Llama-3.2-1B",
+    'deepseek': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
+    'qwen': 'Qwen/Qwen3-0.6B',
+    'gemma' : 'google/gemma-3n-E4B-it'
+}
+
+developers = {
+    'phi2':"microsoft",
+    'llama':"meta",
+    'deepseek': 'deepseek-ai',
+    'qwen': 'Qwen',
+    'gemma': 'google',
+}
