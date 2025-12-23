@@ -1,80 +1,56 @@
 import argparse
+import sys
 from prompt_process import load_json
 import attack
-import download_models
 from utils import model_names_list
 
-def run_attack(model_name, attack_type, args):
-    """
-    Execute an attack on a specified model using the chosen attack type.
-    """
-    if attack_type == "AutoDAN":
-        print(f"Applying AutoDAN attack to {model_name}")
-        attack_instance = attack.AutoDAN(model=model_name)
-        attack_instance.run()
-    elif attack_type == "GPTFuzz":
-        print(f"Applying GPTFuzz attack to {model_name}")
-        attack_instance = attack.GPTFuzz(model=model_name)
-        attack_instance.run()
-    elif attack_type == "DeepInception":
-        print(f"Applying DeepInception attack to {model_name}")
-        attack_instance = attack.DeepInception(model=model_name)
-        attack_instance.run()
-    elif attack_type == "Tap":
-        print(f"Applying Tap attack to {model_name}")
-        attack_instance = attack.Tap(model=model_name, attack_model=args.attack_model, evaluation_model=args.evaluation_model)
-        attack_instance.run()
-    elif attack_type == "Pair":
-        print (f"Applying Pair attack to {model_name}")
-        attack_instance = attack.Pair(model=model_name)
-        attack_instance.run()
-    elif attack_type == "Jailbroken":
-        print(f"Applying Jailbroken attack to {model_name}")
-        attack_instance = attack.Jailbroken(model=model_name)
-        attack_instance.run()
-    elif attack_type == "TemplateJailbreak":
-        print (f"Applying TemplateJailbreak attack to {model_name}")
-        attack_instance = attack.TemplateJailbreak(model=model_name)
-        attack_instance.run()
-    elif attack_type == "Parameters":
-        print(f"Applying Parameters attack to {model_name}")
-        attack_instance = attack.Parameters(model=model_name)
-        attack_instance.run()
-    elif attack_type == "GCG":
-        print(f"Applying GCG attack to {model_name}")
-        attack_instance = attack.GCG(model=model_name)
-        attack_instance.run()
-    elif attack_type == "FFA":
-        print(f"Applying FFA attack to {model_name}")
-        attack_instance = attack.FFA(model=model_name)
-        attack_instance.run()
-    else:
-        print("Attack type not recognized.")
+ATTACK_REGISTRY = {
+    "DeepInception": attack.DeepInception,
+    "Jailbroken": attack.Jailbroken,
+    "TemplateJailbreak": attack.TemplateJailbreak,
+    "Parameters": attack.Parameters,
+    "FFA": attack.FFA,
+}
+
+
+def run_attack(model_name, attack_type):
+    """Execute an attack on a specified model."""
+    if attack_type not in ATTACK_REGISTRY:
+        raise ValueError(f"Attack type '{attack_type}' not recognized. Available: {', '.join(ATTACK_REGISTRY.keys())}")
+    
+    print(f"Applying {attack_type} attack to {model_name}")
+    attack_instance = ATTACK_REGISTRY[attack_type](model=model_name)
+    attack_instance.run()
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Run attack and defense mechanisms on AI models")
-    parser.add_argument('--model', choices=model_names_list.keys(), required=False, help='Model to attack or defend')
-    parser.add_argument('--attack-model', required=False, help='Name of the attack model [Used in Generative Attacks]')
-    parser.add_argument('--evaluation-model', required=False, help='Name of the evaluation model [Used in Generative Attacks]')
-    parser.add_argument('--mode', choices=['attack','process'], required=False, help='Whether to run an attack or apply a defense or process the results.')
-    parser.add_argument('--type', required=False, help='Type of attack to run')
-    parser.add_argument('--need-download', required=False,default="false", help='do you need to download the model?')
+    parser = argparse.ArgumentParser(description="Run attack mechanisms on AI models")
+    parser.add_argument('--model', choices=list(model_names_list.keys()), required=True, 
+                        help='Target model for attack execution or result processing')
+    parser.add_argument('--attack-model', help='Attack model identifier for generative attack methods')
+    parser.add_argument('--mode', choices=['attack', 'process'], required=True,
+                        help='Choose to execute an attack or process existing results')
+    parser.add_argument('--type', choices=list(ATTACK_REGISTRY.keys()),
+                        help='Attack method to execute (mandatory for attack mode)')
+    
     args = parser.parse_args()
+    
+    # Validate attack mode requirements
+    if args.mode == 'attack' and not args.type:
+        parser.error("--type is required when mode is 'attack'")
+    
+    try:
+        # Execute operation
+        if args.mode == 'attack':
+            run_attack(args.model, args.type)
+        elif args.mode == 'process':
+            print(f"Processing results from ./Results/{args.model}")
+            load_json(f'./Results/{args.model}')
+            
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
-    if "false" in args.need_download:
-        args.need_download = False
-    else:
-        args.need_download = True
-
-    if args.need_download:
-        print("downloading the model")            
-        download_models.download(args.model)
-
-    if args.mode == 'attack':
-        run_attack(args.model, args.type, args)
-    elif args.mode == 'process':
-        ##NOTE This must happen before the defense is applied
-        load_json(f'./Results/{args.model}')
 
 if __name__ == "__main__":
     main()
