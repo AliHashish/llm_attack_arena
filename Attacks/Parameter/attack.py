@@ -22,7 +22,6 @@ def process_raw_jailbreak_prompts(model_name):
     f = open(f'../../Data/data.csv')
     datas = pd.read_csv(f, usecols=['goal'])
     f.close()
-    results = [{} for _ in range(len(datas))]
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
