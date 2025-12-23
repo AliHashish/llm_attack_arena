@@ -1,42 +1,9 @@
-import gc
 import numpy as np
-import torch
 import torch.nn as nn
-import time
-import argparse
-import os
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 import subprocess
 from prompt_toolkit.shortcuts import ProgressBar
-import re
-import gc
-import logging
-fro
-
-logging.basicConfig(level=logging.INFO)
-os.environ["MKL_THREADING_LAYER"] = "GNU"
-
-
-def _clear_memo():
-    tensors_to_delete = []
-    
-    for obj in gc.get_objects():
-        
-        try:
-            if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-                print(obj)
-                tensors_to_delete.append(obj)
-        except:
-            pass
-    
-    for tensor in tensors_to_delete:
-        # print("delete",tensor)
-        del tensor
-    
-    gc.collect()
-    torch.cuda.empty_cache()
-    
 
 def args_to_cmd(args):
     cmd = []
@@ -80,7 +47,7 @@ class DeepInception(BaseAttackModel):
             with subprocess.Popen(cmd, cwd="./Attacks/DeepInception", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-                    logging.info(line)
+
         finally:
             sp.terminate()
             sp.wait()
@@ -108,7 +75,7 @@ class TemplateJailbreak(BaseAttackModel):
             with subprocess.Popen(cmd, cwd="./Attacks/TemplateJailbreak/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-                    logging.info(line)
+
         finally:
             sp.terminate()
             sp.wait()
@@ -135,7 +102,7 @@ class Parameters(BaseAttackModel):
             with subprocess.Popen(cmd, cwd="./Attacks/Parameter/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-                    logging.info(line)
+
         finally:
             sp.terminate()
             sp.wait()
@@ -161,7 +128,7 @@ class FFA(BaseAttackModel):
             with subprocess.Popen(cmd, cwd="./Attacks/FFA/", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as sp:
                 for line in sp.stdout:
                     print(line)
-                    logging.info(line)
+
         finally:
             sp.terminate()
             sp.wait()
