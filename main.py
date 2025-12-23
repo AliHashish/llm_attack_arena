@@ -1,12 +1,10 @@
 import argparse
 import sys
-from prompt_process import load_json
 import attack
 from utils import model_names_list
 
 ATTACK_REGISTRY = {
     "DeepInception": attack.DeepInception,
-    "Jailbroken": attack.Jailbroken,
     "TemplateJailbreak": attack.TemplateJailbreak,
     "Parameters": attack.Parameters,
     "FFA": attack.FFA,
