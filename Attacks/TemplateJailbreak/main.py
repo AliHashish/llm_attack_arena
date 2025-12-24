@@ -24,7 +24,7 @@ final_res = []
     
 def run(model_name):
     file_path = '../../Data/data.csv'
-    jailbreak_path = './jailbreak-prompt.xlsx'
+    jailbreak_path = '../../Data/jailbreak-prompt.xlsx'
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
