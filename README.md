@@ -23,6 +23,12 @@ This project implements and evaluates multiple jailbreak attack methods against 
 - **Parameter**: Parameter manipulation attacks
 - **TemplateJailbreak**: Template-based prompt injection
 
+## Dataset
+
+- `Data/data.csv`: 60 malicious prompts obtained from [llmcomprehensive](https://drive.google.com/drive/u/3/folders/15QKEpWMn8H97YIBoyD-fF1gwAorYGYmz)
+- `Data/jailbrea-prompt.xlsx`: 78 Jailbreak templates obtained from [llm-jailbreak-study](https://sites.google.com/view/llm-jailbreak-study/taxonomy?authuser=0)
+
+
 ## Usage
 
 ### Setup
@@ -44,6 +50,8 @@ python main.py --model deepseek --type FFA
 python main.py --model qwen --type Parameters
 ```
 
+Available models: `phi2`, `llama`, `deepseek`, `qwen`, `gemma`
+
 Available attack types: `DeepInception`, `Jailbroken`, `TemplateJailbreak`, `Parameters`, `FFA`
 
 ## Structure
@@ -60,6 +68,8 @@ Available attack types: `DeepInception`, `Jailbroken`, `TemplateJailbreak`, `Par
 
 ## Results
 
-Attack success rates and evaluations are stored in:
-- `Attacks/*/bpr_results/` - Attack results per method
-- `Evaluation/` - Evaluation metrics and analysis
+Evaluations are stored in:
+- `Attacks/*/bpr_results/` - BPR results per attack type
+- `Attacks/*/Evaluation/` - ASR and efficiency per attack type
+- `Evaluation` - ASR and effiency combined for all attack types
+- `bpr_results.json` - Quick access to BPR results for all attack types
