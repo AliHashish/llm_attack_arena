@@ -68,8 +68,11 @@ Available attack types: `DeepInception`, `Jailbroken`, `TemplateJailbreak`, `Par
 
 ## Results
 
+Results are stored in:
+- `Attacks/*/Results` - Model responses
+- `Evaluation/significant_results.json` - Manually selected responses that we deemed noteworthy
+
+
 Evaluations are stored in:
-- `Attacks/*/bpr_results/` - BPR results per attack type
-- `Attacks/*/Evaluation/` - ASR and efficiency per attack type
-- `Evaluation` - ASR and effiency combined for all attack types
-- `bpr_results.json` - Quick access to BPR results for all attack types
+- `Evaluation` - ASR and effiency results for all attack types
+- `bpr_results.json` - BPR results for all attack types
