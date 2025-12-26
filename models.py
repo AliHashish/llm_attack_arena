@@ -6,6 +6,7 @@ from vllm import SamplingParams
 MAX_LEN = 2048
 
 def truncate_prompts(tokenizer, prompts, max_len):
+    # Truncate prompts to fit within max_len tokens
     truncated = []
     for prompt in prompts:
         tokens = tokenizer(prompt, truncation=True, max_length=max_len, return_tensors="pt")["input_ids"]
@@ -38,6 +39,7 @@ class LocalVLLM(LLM):
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
+        # Initialize VLLM model based on model_path
         if 'deepseek' in model_path or 'llama' in model_path:
             self.model = VLLM(model=model_name, dtype="float16",
                 # tensor_parallel_size=1,   # num of GPUs to run on
@@ -54,7 +56,7 @@ class LocalVLLM(LLM):
             self.model = VLLM(model=model_name, gpu_memory_utilization=gpu_memory_utilization)
         
         if system_message is None and 'llama' in model_path:
-            # monkey patch for latest FastChat to use llama's official system message
+            # system message for the llama model
             self.system_message = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. " \
             "Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. " \
             "Please ensure that your responses are socially unbiased and positive in nature.\n\n" \
@@ -64,10 +66,12 @@ class LocalVLLM(LLM):
             self.system_message = system_message
 
     def set_system_message(self, conv_temp):
+        # Set system message in conversation template
         if self.system_message is not None:
             conv_temp.set_system_message(self.system_message)
 
     def generate(self, prompt, temperature=1.0, max_tokens=150,top_p=1,top_k=-1, repetition_penalty=1.0,frequency_penalty=0.0,presence_penalty=0.0,n=1):
+        # Single prompt generation
         prompts= [prompt]
         if n > 1:
             result=self.generate_batch(prompts,temperature,max_tokens,top_p,top_k,repetition_penalty,frequency_penalty,presence_penalty,n=n)
@@ -76,6 +80,7 @@ class LocalVLLM(LLM):
         return result
 
     def generate_batch(self, prompts, temperature=1.0, max_tokens=150,top_p=1,top_k=-1, repetition_penalty=1.0,frequency_penalty=0.0,presence_penalty=0.0,n=1):
+        # Batch prompt generation
         prompts = truncate_prompts(self.tokenizer, prompts, MAX_LEN)
         sampling_params = SamplingParams(temperature=temperature, max_tokens=max_tokens,top_p=top_p,top_k=top_k,repetition_penalty=repetition_penalty,frequency_penalty=frequency_penalty,presence_penalty=presence_penalty,n=n)
         results = self.model.generate(prompts, sampling_params, use_tqdm=False)
@@ -87,12 +92,14 @@ class LocalVLLM(LLM):
         return outputs
 
     def create_conv_prompt(self,prompt):
+        # Create conversation prompt using the conversation template
         conv_template = get_conversation_template(
             self.model_name
         )
         conv_template.messages = [] 
         conv_template.append_message(conv_template.roles[0], prompt)
         conv_template.append_message(conv_template.roles[1], None)
+        # System message, prompt, response
 
         full_prompt = conv_template.get_prompt()
         return full_prompt

@@ -15,6 +15,7 @@ from deepinception_templates import inception_templates
 
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
+# Repeat each question 3 times (to account for model randomness)
 
     
 def run(model_name):
@@ -27,13 +28,14 @@ def run(model_name):
         model_name = model_names_list[args.model]
         model_path = get_model_path(model_name)
 
-        print(f"\n\n\nmodelPath: {model_path}\n\n\n")
+        print(f"\n\n\nmodelPath: {model_path}\n\n\n")       # print to make sure it's correct
         model_name_absolute = "/".join(model_path.split("/")[-2:])
     else:
         model_name = 'unknown'
         raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
     
 
+    # Load the model
     local_model = models.LocalVLLM(model_path=model_name_absolute, model_name=model_name)
         
     final_results = []
@@ -45,23 +47,27 @@ def run(model_name):
             CURRENT_ITERATION += 1
             results[idx]['qA_pairs'] = []
 
+            # Equation for progress tracking
             print(f"Question {CURRENT_ITERATION + idx * len(inception_templates)}/{len(datas) * len(inception_templates)}")
 
             prompt = template.replace("ඞ", question)
+            # Create conversation prompt
             prompts.append(local_model.create_conv_prompt(prompt))
+            # Generate response
             target_response_list = local_model.generate_batch(prompts, max_tokens = 1500)
             results[idx]['qA_pairs'].append({'Q': question, 'A': target_response_list})
 
             final_results.append({'prompt': template, 'response': target_response_list[0], 'question': question,"template number":CURRENT_ITERATION })
 
         
-    
+    # Save results to a JSON file
     model_name_path = model_name.replace("/","_")
     if not os.path.exists(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results"):
             os.makedirs(f"/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results")
     with open(f'/content/drive/MyDrive/llm_attack_arena/Attacks/DeepInception/Results/DeepInception_{model_name_path}.json', 'w') as f:
          json.dump(final_results, f, indent=4)
     
+    # Freeing memory
     del local_model
     gc.collect()
     torch.cuda.empty_cache()

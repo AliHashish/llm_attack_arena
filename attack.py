@@ -1,3 +1,4 @@
+# File for initiating different attack models
 import numpy as np
 import torch.nn as nn
 from prompt_toolkit import prompt
@@ -12,6 +13,7 @@ def args_to_cmd(args):
         cmd.append(str(value))
     return cmd
 
+# Base class for attack models (all attack models inherit from this)
 class BaseAttackModel:
     def __init__(self):
         self.parameters = {}

@@ -11,6 +11,7 @@ ATTACK_REGISTRY = {
 }
 
 
+# Running the specified attack
 def run_attack(model_name, attack_type):
     """Execute an attack on a specified model."""
     if attack_type not in ATTACK_REGISTRY:
